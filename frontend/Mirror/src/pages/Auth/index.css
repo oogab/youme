@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'BAUHS93';
+  font-style: normal;
+  font-weight: 100;
+  font-size: large;
+  src: url('../../fonts/BAUHS93.ttf') format('truetype');
+}
+body {
+  background-color: black;
+}

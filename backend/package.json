@@ -1,0 +1,46 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "### History - __07-19 ~ 07-23__ : 데이터베이스 및 프로젝트 아키텍처 설계, 백엔드 서버 기초 구성 및 User관련 API 완성",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app -p 3065",
+    "start": "cross-env NODE=production pm2 start app.js"
+  },
+  "author": "wook",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "2.0.12",
+    "swagger-jsdoc": "6.1.0",
+    "swagger-ui-express": "4.1.6"
+  },
+  "dependencies": {
+    "antd": "4.16.9",
+    "aws-sdk": "2.964.0",
+    "axios": "^0.21.1",
+    "bcrypt": "5.0.1",
+    "connect-redis": "6.0.0",
+    "cookie-parser": "1.4.5",
+    "cors": "2.8.5",
+    "cross-env": "7.0.3",
+    "dotenv": "10.0.0",
+    "express": "4.17.1",
+    "express-session": "1.17.2",
+    "helmet": "4.6.0",
+    "hpp": "0.2.3",
+    "monent": "0.0.2-security",
+    "morgan": "1.10.0",
+    "multer": "1.4.2",
+    "multer-s3": "2.9.0",
+    "multer-s3-transform": "2.10.3",
+    "mysql2": "2.2.5",
+    "passport": "0.4.1",
+    "passport-kakao": "1.0.1",
+    "passport-local": "1.0.0",
+    "pm2": "5.1.0",
+    "redis": "3.1.2",
+    "sequelize": "6.6.5",
+    "sequelize-cli": "6.2.0",
+    "sharp": "0.28.3"
+  }
+}
