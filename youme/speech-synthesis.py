@@ -9,7 +9,7 @@ from google.cloud import texttospeech
 client = texttospeech.TextToSpeechClient()
 
 # Set the text input to be synthesized
-synthesis_input = texttospeech.SynthesisInput(text="응답 무슨 말인지 모르겠어요.")
+synthesis_input = texttospeech.SynthesisInput(text="응답 제 일인걸요!")
 
 # Build the voice request, select the language code ("en-US") and the ssml
 # voice gender ("neutral")
