@@ -90,6 +90,9 @@ def listen_print_loop(responses):
     call_youme = False
 
     for response in responses:
+        if user_id == '':
+            continue
+
         if not response.results:
             continue
 
@@ -116,7 +119,7 @@ def listen_print_loop(responses):
                 call_youme = True
                 global expression_index
                 expression_index = 1
-                os.system("mpg321 -g 20 ne.mp3")
+                os.system("mpg321 -g 20 youme_wake.mp3")
 
             num_chars_printed = 0
         else:
@@ -352,6 +355,7 @@ class MainWindow(QWidget):
 
     def logout(self):
         screenWidget.setCurrentIndex(screenWidget.currentIndex()-1)
+        user_id = ''
 
     def net(self):
         headers = {'Content-Type' : 'application/json; charset=utf-8'}
