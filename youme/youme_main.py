@@ -157,6 +157,10 @@ def listen_print_loop(responses):
             call_youme = False
             expression_index = 0
 
+def start_stt_t():
+    stt_t = threading.Thread(target=stt)
+    stt_t.start()
+
 def stt():
     # 여기 부분을 아예 떼어다가 새 스레드에 담으니까 되었다!
     language_code = 'ko-KR'
@@ -379,9 +383,16 @@ if __name__ == "__main__":
     screenWidget.setGeometry(400, 400, 520, 500)
     screenWidget.show()
     app.setStyleSheet(dark_stylesheet)
+    
+    start_timer = QTimer()
+    # 305초 마다 stt api가 종료 300초 마다 스레드 재 실행
+    # 너무 주먹구구 식인가...?
+    start_timer.setInterval(300000)
+    start_timer.timeout.connect(start_stt_t)
+    start_timer.start()
 
-    stt_t = threading.Thread(target=stt)
-    stt_t.start()
+    # 처음은 강제로 실행시켜줘야 한다.
+    start_stt_t()
     
     # 프로그램을 이벤트 루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
