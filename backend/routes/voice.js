@@ -4,20 +4,19 @@ const { isLoggedIn } = require('./middlewares')
 const router = express.Router()
 
 // GET / 라우터
-router.get('/speaker',isLoggedIn,  async (req, res, next) => {
+router.get('/speaker', async (req, res, next) => {
     try {
         const headers = {
             "Content-Type":"application/json",
             "X-CLOVASPEECH-API-KEY":process.env.CLOVA_SPEECH_KEY
         }
-        const result = await axios.post(process.env.CLOVA_SPEECH_URL)
-        await axios({
+        const result = await axios({
             url:process.env.CLOVA_SPEECH_URL+'/recognizer/url',
             method :'post',
             headers,
             
         })
-        res.status(200).send({weather:weather.data, dong})
+        res.status(200).send(result)
     }catch (error) {
         console.error(error)
         next(error)
