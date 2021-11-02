@@ -1,8 +1,10 @@
 import sys
+import os
 import re
 import threading
 import time
 import schedule
+import random
 
 # pyqt5
 from PyQt5 import QtCore
@@ -14,7 +16,7 @@ import qdarkstyle
 from datetime import datetime
 
 # network connection
-from google.cloud import speech
+from google.cloud import speech, texttospeech
 import pyaudio
 import queue
 import asyncio
@@ -22,10 +24,16 @@ import socketio
 import requests
 import json
 
+from mpyg321.mpyg321 import MPyg321Player
+
 expression_index = 0
 
 RATE = 8000
 CHUNK = int(RATE / 10)
+
+cookies = ''
+user_id = ''
+url = 'http://112.169.87.3:8005'
 
 class MicrophoneStream(object):
     def __init__(self, rate, chunk):
@@ -82,6 +90,9 @@ def listen_print_loop(responses):
     call_youme = False
 
     for response in responses:
+        if user_id == '':
+            continue
+
         if not response.results:
             continue
 
@@ -106,12 +117,9 @@ def listen_print_loop(responses):
 
             if re.search(r'\b(유미야)\b', transcript, re.I):
                 call_youme = True
-                # headers = {'Content-Type': 'application/json; charset=utf-8'}
-                # data = {'message': transcript}
-                # res = await requests.post('http://112.169.87.3:8005/youme', headers=headers, data=json.dump(data))
-                # print(res)
                 global expression_index
                 expression_index = 1
+                os.system("mpg321 -g 20 youme_wake.mp3")
 
             num_chars_printed = 0
         else:
@@ -121,17 +129,51 @@ def listen_print_loop(responses):
                 print('Exiting..')
                 break
             
-            headers = {'Content-Type': 'application/json; charset=utf-8'}
-            data = {'message': transcript}
-            res = requests.post('http://112.169.87.3:8005/youme', headers=headers, data=json.dumps(data))
-            print(res.status_code)
+            if re.search(r'\b(오늘 루틴)\b', transcript, re.I):
+                headers = {'Content-Type': 'application/json; charset=utf-8'}
+                data = {'userId': user_id}
+                res = requests.post(url+'/youme/routine', headers=headers, data=json.dumps(data))
+                print(res.text)
+                tts(res.text)
+
+            elif re.search(r'\b(오늘 챌린지)\b', transcript, re.I):
+                headers = {'Content-Type' : 'application/json; charset=utf-8'}
+                data = {'userId' : user_id}
+                res = requests.post(url+'/youme/challenge', headers=headers, data=json.dumps(data))
+                print(res.text)
+                tts(res.text)
+
+            elif re.search(r'\b(고마워)\b', transcript, re.I):
+                expression_index = 2
+                if random.randrange(0,3) == 1:
+                    os.system("mpg321 -g 20 gwaenchan.mp3")
+                elif random.randrange(0,3) == 2:
+                    os.system("mpg321 -g 20 jaeil.mp3")
+            else:
+                headers = {
+                    'Content-Type': 'application/json; charset=utf-8',
+                }
+                data = {'message': transcript}
+                res = requests.post(url+'/youme', headers=headers, data=json.dumps(data))
+                print('reply : ', res.text)
+                os.system("mpg321 -g 20 molla.mp3")
             call_youme = False
             expression_index = 0
 
+def start_stt_t():
+    stt_t = threading.Thread(target=stt)
+    stt_t.start()
 
 def stt():
+    # 여기 부분을 아예 떼어다가 새 스레드에 담으니까 되었다!
     language_code = 'ko-KR'
-    speech_context = speech.SpeechContext(phrases=["$유미야"])
+    speech_context = speech.SpeechContext(phrases=[
+                "$유미야",
+                "$오늘 챌린지 알려줘",
+                "$오늘 루틴 알려줘",
+                "$오늘 일정 알려줘",
+                "$고마워"
+            ])
     client = speech.SpeechClient()
     config = speech.RecognitionConfig(
             encoding = 'LINEAR16',
@@ -151,21 +193,60 @@ def stt():
         responses = client.streaming_recognize(streaming_config, requests)
         listen_print_loop(responses)
 
+def tts(talk):
+    # Instantiates a client
+    client = texttospeech.TextToSpeechClient()
+    
+    # Set the text input to be synthesized
+    synthesis_input = texttospeech.SynthesisInput(text=talk)
+
+    # Build the void request, select the language code ("en-US") and the ssml
+    # voice gender ("neutral")
+    voice = texttospeech.VoiceSelectionParams(
+            language_code="ko-KR", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+    )
+
+    # Select the type of audio file you want returned
+    audio_config = texttospeech.AudioConfig(
+            audio_encoding=texttospeech.AudioEncoding.MP3
+    )
+
+    # Perform the text-to-speech request on the text input with the selected
+    # voice parameters and audio file type
+    response = client.synthesize_speech(
+            input=synthesis_input, voice=voice, audio_config=audio_config
+    )
+
+    # The response's audio_content is binary.
+    with open("output.mp3", "wb") as out:
+        # Write the response to the output file.
+        out.write(response.audio_content)
+        print('Audio content written to file "output.mp3"')
+
+    # 생성된 output.mp3 파일 실행
+    os.system("mpg321 -g 20 output.mp3")
 
 class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
-        # self.setWindowFlags(Qt.FramelessWindowHint) # 상단 바 제거
         self.initLoginWindow()
 
     def initLoginWindow(self):
         self.loginLayout = QVBoxLayout(self)
 
+        self.loginEmailLayout = QHBoxLayout(self)
+        self.loginEmailLabel = QLabel('Email')
         self.loginEmailInput = QLineEdit(self)
-        self.loginLayout.addWidget(self.loginEmailInput)
+        self.loginEmailLayout.addWidget(self.loginEmailLabel)
+        self.loginEmailLayout.addWidget(self.loginEmailInput)
+        self.loginLayout.addLayout(self.loginEmailLayout)
 
+        self.loginPasswordLayout = QHBoxLayout(self)
+        self.loginPasswordLabel = QLabel('Password')
         self.loginPasswordInput = QLineEdit(self)
-        self.loginLayout.addWidget(self.loginPasswordInput)
+        self.loginPasswordLayout.addWidget(self.loginPasswordLabel)
+        self.loginPasswordLayout.addWidget(self.loginPasswordInput)
+        self.loginLayout.addLayout(self.loginPasswordLayout)
 
         loginButton = QPushButton('로그인', self)
         loginButton.setFixedSize(500, 30)
@@ -178,20 +259,29 @@ class LoginWindow(QWidget):
         self.loginLayout.addWidget(exitButton)
 
         self.setLayout(self.loginLayout)
-        self.setGeometry(400, 400, 500, 500)
+        # self.setGeometry(400, 400, 500, 500)
 
         self.show()
 
     def login(self):
-        print('login!')
-        headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data = {'email': str(self.loginEmailInput.text()), 'password': str(self.loginPasswordInput.text())}
-        res = requests.post('http://112.169.87.3:8005/user/login', data=json.dumps(data), headers=headers)
-        # print(str(res.status_code) + " | " + res.text)
-        if res.status_code == 200:
-            screenWidget.setCurrentIndex(screenWidget.currentIndex()+1)
-        else:
-            print('입력한 정보가 올바르지 않습니다!')
+        global user_id
+        # requests로 직접 접속도 가능하지만 요청 사항을 다루려면 세션을 만들어야 한다!
+        with requests.Session() as session:
+            headers = {'Content-Type' : 'application/json; charset=utf-8'}
+            data = {'email': str(self.loginEmailInput.text()), 'password': str(self.loginPasswordInput.text())}
+            with session.post(url+'/user/login', data=json.dumps(data), headers=headers) as response:
+                print("response text - ", str(response.text))
+                print("response headers - ", str(response.headers))
+                print("response cookies - ", str(response.cookies))
+                cookies = response.cookies
+                headers = session.headers
+                user_id = response.json()["id"]
+
+                if response.status_code == 200:
+                    print('로그인 성공!')
+                    screenWidget.setCurrentIndex(screenWidget.currentIndex()+1)
+                else:
+                    print('입력한 정보가 올바르지 않습니다!')
 
     def close(self):
         return QCoreApplication.instance().quit()
@@ -201,7 +291,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.timer = QTimer(self)
-        self.timer.setInterval(500)
+        self.timer.setInterval(300)
         self.timer.timeout.connect(self.timeout)
 
         self.initMainWindow()
@@ -224,7 +314,7 @@ class MainWindow(QWidget):
         self.logoutButton = QPushButton('로그아웃')
         self.logoutButton.clicked.connect(self.logout)
 
-        # self.mainLayout.addWidget(self.logoutButton)
+        self.mainLayout.addWidget(self.logoutButton)
         self.setLayout(self.mainLayout)
         self.show()
 
@@ -265,7 +355,14 @@ class MainWindow(QWidget):
 
     def logout(self):
         screenWidget.setCurrentIndex(screenWidget.currentIndex()-1)
+        user_id = ''
 
+    def net(self):
+        headers = {'Content-Type' : 'application/json; charset=utf-8'}
+        print(user_id)
+        data = {'userId' : user_id}
+        res = requests.post('http://112.169.87.3:8005/youme/challenge', data=json.dumps(data), headers=headers)
+        tts(res.text)
 
 if __name__ == "__main__":
     # QApplication : 프로그램을 실행시켜주는 클래스
@@ -284,39 +381,23 @@ if __name__ == "__main__":
     # Widget 추가
     screenWidget.addWidget(loginWindow)
     screenWidget.addWidget(mainWindow)
+    screenWidget.setWindowFlags(Qt.FramelessWindowHint);
 
     # 프로그램 화면을 보여주는 코드
-    screenWidget.setFixedSize(520, 500)
+    screenWidget.setGeometry(400, 400, 520, 500)
     screenWidget.show()
     app.setStyleSheet(dark_stylesheet)
+    
+    start_timer = QTimer()
+    # 305초 마다 stt api가 종료 300초 마다 스레드 재 실행
+    # 너무 주먹구구 식인가...?
+    start_timer.setInterval(300000)
+    start_timer.timeout.connect(start_stt_t)
+    start_timer.start()
 
-    stt_t = threading.Thread(target=stt)
-    stt_t.start()
-    # 여기 부분을 아예 떼어다가 새 스레드에 담으니까 되었다!
-    """
-    language_code = 'ko-KR'
-    client = speech.SpeechClient()
-    config = speech.RecognitionConfig(
-            encoding = 'LINEAR16',
-            sample_rate_hertz = RATE,
-            max_alternatives = 1,
-            language_code = language_code
-    )
-    streaming_config = speech.StreamingRecognitionConfig(
-            config = config,
-            interim_results = True
-    )
-
-    with MicrophoneStream(RATE, CHUNK) as stream:
-        audio_generator = stream.generator()
-        requests = (speech.StreamingRecognizeRequest(audio_content = content) for content in audio_generator)
-        responses = client.streaming_recognize(streaming_config, requests)
-        # listen_print_loop(responses)
-        t = threading.Thread(target=listen_print_loop, args=(responses,))
-        
-    t.start()
-    # asyncio.get_event_loop().run_until_complete(listen_print_loop(responses))
-    """
+    # 처음은 강제로 실행시켜줘야 한다.
+    start_stt_t()
+    
     # 프로그램을 이벤트 루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
     stt_t.join()
