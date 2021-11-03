@@ -94,6 +94,18 @@ const DrawerListGroup = (props) => {
                     />
                   </ListItem>
                   </NavLink>
+                  <NavLink to="/YoumeSetting" className='router'
+                    activeClassName='active-router' onClick={onMovePage}>
+                  <ListItem
+                    button
+                    key={'YoumeSetting'}
+                  >
+                    <ListItemText
+                      primary={'유미(YOUME) 설정'}
+                      disableTypography
+                    />
+                  </ListItem>
+                  </NavLink>
                   {/* <NavLink to="/ChangePassword" className='router'
                     activeClassName='active-router' onClick={onMovePage}>
                     <ListItem

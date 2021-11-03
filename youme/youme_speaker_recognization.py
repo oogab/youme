@@ -1,10 +1,10 @@
 from __future__ import division
-import base64
-import array
+
 import requests as rq
 import re
 import sys
-import wave
+from dotdev import load_dotenv
+import os
 from io import BytesIO
 from google.cloud import speech
 
@@ -14,9 +14,9 @@ from six.moves import queue
 # Audio recording parameters
 RATE = 16000
 CHUNK = int(RATE)  # 100ms
-ENDPOINT = "https://mymespeakers.cognitiveservices.azure.com"
-KEY = "1df5d6a47a8e4ccfacf5003d460f9fa7"
-PROFILE_ID='345dde11-98aa-417e-901b-28393be9f77c'
+ENDPOINT = os.environ.get("ENDPOINT")
+KEY = os.environ.get("KEY")
+PROFILE_ID='345dde11-98aa-417e-901b-28393be9f77c' # 임시 프로필 아이디
 FRAME = []
 
 class MicrophoneStream(object):
