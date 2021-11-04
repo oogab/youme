@@ -11,6 +11,15 @@ const initialState = {
   logInLoading: false,
   logInDone: false,
   logInError: null,
+  getYoumeInfoLoading : false,
+  getYoumeInfoDone : false,
+  getYoumeInfoError : null,
+  createSpeakerIdLoading : false,
+  createSpeakerIdDone : false,
+  createSpeakerIdError : null,
+  entrollSpeakerLoading:false,
+  entrollSpeakerDone:false,
+  entrollSpeakerError:null,
   logOutLoading: false,
   logOutDone: false,
   logOutError: null,
@@ -19,6 +28,7 @@ const initialState = {
   signUpError: null,
   me: null,             // 현재 로그인한 유저 정보
   isSignUp: false,      // 로그인 폼 <-> 회원가입 폼
+  youmeInfo : null,
 }
 
 export const UPDATE_MY_INFO_REQUEST = 'UPDATE_MY_INFO_REQUEST'
@@ -32,6 +42,18 @@ export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE'
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST'
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS'
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE'
+
+export const CREATE_SPEAKER_ID_REQUEST = 'CREATE_SPEAKER_ID_REQUEST'
+export const CREATE_SPEAKER_ID_SUCCESS = 'CREATE_SPEAKER_ID_SUCCESS'
+export const CREATE_SPEAKER_ID_FAILURE = 'CREATE_SPEAKER_ID_FAILURE'
+
+export const ENTROLL_SPEAKER_REQUEST = 'ENTROLL_SPEAKER_REQUEST'
+export const ENTROLL_SPEAKER_SUCCESS = 'ENTROLL_SPEAKER_SUCCESS'
+export const ENTROLL_SPEAKER_FAILURE = 'ENTROLL_SPEAKER_FAILURE'
+
+export const GET_YOUME_INFO_REQUEST = 'GET_YOUME_INFO_REQUEST'
+export const GET_YOUME_INFO_SUCCESS = 'GET_YOUME_INFO_SUCCESS'
+export const GET_YOUME_INFO_FAILURE = 'GET_YOUME_INFO_FAILURE'
 
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST'
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS'
@@ -108,15 +130,29 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.logInLoading = false
       draft.logInError = action.error
       break
+    case GET_YOUME_INFO_REQUEST:
+      draft.getYoumeInfoLoading = true
+      draft.getYoumeInfoDone = false
+      draft.getYoumeInfoError = null
+      break
+    case GET_YOUME_INFO_SUCCESS:
+      draft.getYoumeInfoLoading = false
+      draft.youmeInfo = action.data
+      draft.getYoumeInfoDone = true
+      break
+    case GET_YOUME_INFO_FAILURE:
+      draft.getYoumeInfoLoading = false
+      draft.getYoumeInfoError = action.error
+      break
     case LOG_OUT_REQUEST:
       draft.logOutLoading = true
       draft.logOutDone = false
       draft.logOutError = null
-      break
     case LOG_OUT_SUCCESS:
       draft.logOutLoading = false
       draft.logOutDone = true
       draft.me = null
+      draft.youmeInfo = null
       // storage.removeItem('persist:root')
       break
     case LOG_OUT_FAILURE:
@@ -135,6 +171,36 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case SIGN_UP_FAILURE:
       draft.signUpLoading = false
       draft.signUpError = action.error
+      break
+    case CREATE_SPEAKER_ID_REQUEST:
+      draft.createSpeakerIdLoading=true
+      draft.createSpeakerIdDone=false
+      draft.createSpeakerIdError=null
+      break
+    case CREATE_SPEAKER_ID_SUCCESS:
+      draft.createSpeakerIdLoading=false
+      draft.createSpeakerIdDone=true
+      draft.youmeInfo.connectedSpeaker = true
+      draft.youmeInfo.SpeakerId = action.data
+      break
+    case CREATE_SPEAKER_ID_FAILURE:
+      draft.createSpeakerIdLoading=false
+      draft.createSpeakerIdError=action.error
+      console.log(action.error)
+    case ENTROLL_SPEAKER_REQUEST:
+      draft.entrollSpeakerLoading=true
+      draft.entrollSpeakerDone=false
+      draft.createSpeakerIdError=null
+      break
+    case ENTROLL_SPEAKER_SUCCESS:
+      draft.entrollSpeakerLoading=false
+      draft.entrollSpeakerDone=true
+      console.log(action.data)
+      break
+    case ENTROLL_SPEAKER_FAILURE:
+      draft.entrollSpeakerLoading=false
+      draft.entrollSpeakerError=action.error
+      console.log(action.error.response)
       break
     case CHANGE_SIGN_UP_MODE:
       draft.isSignUp = !draft.isSignUp

@@ -19,6 +19,7 @@ db.ChallengeParticipation = require('./challengeParticipation')(sequelize, Seque
 db.ChallengeCertificationDay = require('./challengeCertificationDay')(sequelize, Sequelize)
 db.ChallengeCertificationTime = require('./challengeCertificationTime')(sequelize, Sequelize)
 db.Schedule = require('./schedule')(sequelize,Sequelize)
+db.UsersYoume = require('./usersYoume')(sequelize,Sequelize)
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

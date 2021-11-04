@@ -6,10 +6,20 @@ import {
   call
 } from 'redux-saga/effects'
 import axios from 'axios'
+import dotenv from 'dotenv'
 import {
   LOG_IN_REQUEST,
   LOG_IN_SUCCESS,
   LOG_IN_FAILURE,
+  GET_YOUME_INFO_SUCCESS,
+  GET_YOUME_INFO_REQUEST,
+  GET_YOUME_INFO_FAILURE,
+  CREATE_SPEAKER_ID_REQUEST,
+  CREATE_SPEAKER_ID_SUCCESS,
+  CREATE_SPEAKER_ID_FAILURE,
+  ENTROLL_SPEAKER_REQUEST,
+  ENTROLL_SPEAKER_SUCCESS,
+  ENTROLL_SPEAKER_FAILURE,
   LOG_OUT_REQUEST,
   LOG_OUT_SUCCESS,
   LOG_OUT_FAILURE,
@@ -246,6 +256,23 @@ function* logIn(action) {
   }
 }
 
+function getYoumeInfoAPI(){
+  return axios.get('/UsersYoume/')
+}
+function* getYoumeInfo(){
+  try{
+    const result = yield call(getYoumeInfoAPI)
+    yield put({
+      type:GET_YOUME_INFO_SUCCESS,
+      data : result.data
+    })
+  }catch(err){
+    yield put({
+      type: GET_YOUME_INFO_FAILURE,
+      error: err.response.data
+    })
+  }
+}
 function logOutAPI() {
   return axios.post('/user/logout')
 }
@@ -281,7 +308,44 @@ function* signUp(action) {
       })
   }
 }
-
+function createSpeakerIdAPI(){
+  console.log(process.env.REACT_APP_AZURE_ENDPOINT)
+  return axios.post('/usersYoume/profile')
+}
+function* createSpeakerId(){
+  try{
+    const result = yield call(createSpeakerIdAPI)
+    yield put({
+      type: CREATE_SPEAKER_ID_SUCCESS,
+      data : result
+    })
+  }catch(err){
+    yield put({
+      type:CREATE_SPEAKER_ID_FAILURE,
+      error: err
+    })
+  }
+}
+function entrollSpeakerAPI(data){
+  return axios.post('/usersYoume/entroll',
+  data,
+  {headers:{'Content-type':'multipart/form-data'}}
+  )
+}
+function* entrollSpeaker(action){
+  try{
+    const result = yield call(entrollSpeakerAPI, action.data)
+    yield put({
+      type:ENTROLL_SPEAKER_SUCCESS,
+      data: result
+    })
+  }catch(err){
+    yield put({
+      type:ENTROLL_SPEAKER_FAILURE,
+      error:err
+    })
+  }
+}
 // function* watchRemoveFollower() {
 //   yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower)
 // }
@@ -321,7 +385,9 @@ function* watchUpdateMyInfo() {
 function* watchLogIn() {
   yield takeLatest(LOG_IN_REQUEST, logIn)
 }
-
+function* watchGetYoumeInfo(){
+  yield takeLatest(GET_YOUME_INFO_REQUEST, getYoumeInfo)
+}
 function* watchLogOut() {
   yield takeLatest(LOG_OUT_REQUEST, logOut)
 }
@@ -330,11 +396,21 @@ function* watchSignUp() {
   yield takeLatest(SIGN_UP_REQUEST, signUp)
 }
 
+function* watchCreateSpeakerId(){
+  yield takeLatest(CREATE_SPEAKER_ID_REQUEST, createSpeakerId)
+}
+
+function* watchEntrollSpeaker(){
+  yield takeLatest(ENTROLL_SPEAKER_REQUEST, entrollSpeaker)
+}
 export default function* userSaga() {
   yield all([
       fork(watchLogIn),
       fork(watchLogOut),
       fork(watchSignUp),
+      fork(watchGetYoumeInfo),
+      fork(watchCreateSpeakerId),
+      fork(watchEntrollSpeaker),
       // fork(watchFollow),
       // fork(watchUnfollow),
       // fork(watchLoadUser),

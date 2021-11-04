@@ -29,7 +29,7 @@ const routinizedHabitRouter = require('./routes/routinizedHabit')
 const habitRouter = require('./routes/habit')
 const scheduleRouter = require('./routes/schedule')
 const weatherRouter = require('./routes/weather')
-const voiceRouter = require('./routes/voice')
+const UsersYoumeRouter = require('./routes/usersYoume')
 
 app.set('port', process.env.PORT || 3065)
 passportConfig()
@@ -83,7 +83,7 @@ app.use('/routinizedHabit', routinizedHabitRouter)
 app.use('/habit', habitRouter)
 app.use('/schedule',scheduleRouter)
 app.use('/weather',weatherRouter)
-app.use('/voice',voiceRouter)
+app.use('/usersYoume',UsersYoumeRouter)
 
 app.use((req, res, next) => {
   // req.data = 'wook비번' // middleware간 data 전송
