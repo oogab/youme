@@ -5,6 +5,7 @@ import threading
 import time
 import schedule
 import random
+import pygame
 
 # pyqt5
 from PyQt5 import QtCore
@@ -16,6 +17,7 @@ import qdarkstyle
 from datetime import datetime
 
 # network connection
+# import gspeech
 from google.cloud import speech, texttospeech
 import pyaudio
 import queue
@@ -35,6 +37,8 @@ cookies = ''
 user_id = ''
 url = 'http://112.169.87.3:8005'
 
+stop_stream = False
+
 class MicrophoneStream(object):
     def __init__(self, rate, chunk):
         self._rate = rate
@@ -42,6 +46,7 @@ class MicrophoneStream(object):
 
         self._buff = queue.Queue()
         self.closed = True
+        self.isPause = False
 
     def __enter__(self):
         self._audio_interface = pyaudio.PyAudio()
@@ -63,8 +68,23 @@ class MicrophoneStream(object):
         self._buff.put(None)
         self._audio_interface.terminate()
 
+    def pause(self):
+        if self.isPause == False:
+            self.isPause = True
+
+    def resume(self):
+        if self.isPause == True:
+            self.isPause = False
+
+    def status(self):
+        return self.isPause
+
     def _fill_buffer(self, in_data, frame_count, time_info, status_flags):
-        self._buff.put(in_data)
+        # Continuously collect data from the audio stream, into the buffer.
+        if self.isPause == False:
+            self._buff.put(in_data)
+        # else
+        # self._buff.put(in_data)
         return None, pyaudio.paContinue
 
     def generator(self):
@@ -80,14 +100,18 @@ class MicrophoneStream(object):
                     if chunk is None:
                         return
                     data.append(chunk)
+
                 except queue.Empty:
                     break
 
             yield b''.join(data)
 
 def listen_print_loop(responses):
+    global mic
     num_chars_printed = 0
     call_youme = False
+    pygame.mixer.init()
+    pygame.mixer.music.set_volume(0.3)
 
     for response in responses:
         if user_id == '':
@@ -119,7 +143,11 @@ def listen_print_loop(responses):
                 call_youme = True
                 global expression_index
                 expression_index = 1
-                os.system("mpg321 -g 20 youme_wake.mp3")
+                pygame.mixer.music.load("youme_wake.mp3")
+                pygame.mixer.music.play()
+                while pygame.mixer.music.get_busy() == True:
+                    continue
+                # os.system("mpg321 -g 20 youme_wake.mp3")
 
             num_chars_printed = 0
         else:
@@ -145,18 +173,34 @@ def listen_print_loop(responses):
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
                 expression_index = 2
-                if random.randrange(0,3) == 1:
-                    os.system("mpg321 -g 20 gwaenchan.mp3")
-                elif random.randrange(0,3) == 2:
-                    os.system("mpg321 -g 20 jaeil.mp3")
+                rint = random.randrange(0, 2)
+                if rint == 0:
+                    pygame.mixer.music.load("gwaenchan.mp3")
+                    pygame.mixer.music.play()
+                    while pygame.mixer.music.get_busy() == True:
+                        if mic is not None:
+                            mic.pause()
+                    if mic is not None:
+                        mic.resume()
+                    # os.system("mpg321 -g 20 gwaenchan.mp3")
+                else:
+                    pygame.mixer.music.load("jaeil.mp3")
+                    pygame.mixer.music.play()
+                    while pygame.mixer.music.get_busy() == True:
+                        if mic is not None:
+                            mic.pause()
+                    if mic is not None:
+                        mic.resume()
+
+                    # os.system("mpg321 -g 20 jaeil.mp3")
             else:
                 headers = {
                     'Content-Type': 'application/json; charset=utf-8',
                 }
                 data = {'message': transcript}
-                res = requests.post(url+'/youme', headers=headers, data=json.dumps(data))
+                res = requests.post(url+'/youme/textQuery', headers=headers, data=json.dumps(data))
+                tts(res.text)
                 print('reply : ', res.text)
-                os.system("mpg321 -g 20 molla.mp3")
             call_youme = False
             expression_index = 0
 
@@ -188,6 +232,8 @@ def stt():
     )
 
     with MicrophoneStream(RATE, CHUNK) as stream:
+        global mic
+        mic = stream
         audio_generator = stream.generator()
         requests = (speech.StreamingRecognizeRequest(audio_content = content) for content in audio_generator)
         responses = client.streaming_recognize(streaming_config, requests)
@@ -224,7 +270,12 @@ def tts(talk):
         print('Audio content written to file "output.mp3"')
 
     # 생성된 output.mp3 파일 실행
-    os.system("mpg321 -g 20 output.mp3")
+    pygame.mixer.music.load("output.mp3")
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True:
+        continue
+
+    # os.system("mpg321 -g 20 output.mp3")
 
 class LoginWindow(QWidget):
     def __init__(self):
@@ -348,12 +399,13 @@ class MainWindow(QWidget):
 
     def timeout(self):
         global expression_index
-        print(expression_index)
+        # print(expression_index)
         # PyQt5는 QTimer를 구현하기만 하면 타이머가 트리거 될 때마다
         # self.update()를 사용하며 드로잉을 업데이트하고 원하는 위치로 업데이트 할 수 있다.
         self.update()
 
     def logout(self):
+        global user_id
         screenWidget.setCurrentIndex(screenWidget.currentIndex()-1)
         user_id = ''
 
