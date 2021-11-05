@@ -200,7 +200,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case ENTROLL_SPEAKER_FAILURE:
       draft.entrollSpeakerLoading=false
       draft.entrollSpeakerError=action.error
-      console.log(action.error.response)
+      console.log(action.error)
       break
     case CHANGE_SIGN_UP_MODE:
       draft.isSignUp = !draft.isSignUp

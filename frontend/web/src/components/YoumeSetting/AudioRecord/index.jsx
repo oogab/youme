@@ -20,30 +20,22 @@ function App () {
   }
 
   async function onStop(audioData){
+    console.log(audioData)
+    
     const data = new FormData()
+    
     data.append('file', audioData.blob)
-    for (var key of data.keys()) {
-
-      console.log(key);
-    
+    if(!youmeInfo.connectedSpeaker){
+      dispatch({
+        type:CREATE_SPEAKER_ID_REQUEST
+      })
+    }else{
+      dispatch({
+        type:ENTROLL_SPEAKER_REQUEST,
+        data:data,
+        profileId:youmeInfo.SpeakerId
+      })
     }
-    
-    for (var value of data.values()) {
-    
-      console.log(value);
-    
-  }
-    // if(!youmeInfo.connectedSpeaker){
-    //   dispatch({
-    //     type:CREATE_SPEAKER_ID_REQUEST
-    //   })
-    // }else{
-    //   dispatch({
-    //     type:ENTROLL_SPEAKER_REQUEST,
-    //     data:data
-        
-    //   })
-    // }
   }
   const entroll = () =>{
     console.log(recordedData)

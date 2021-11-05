@@ -65,7 +65,6 @@ const Routers = () => {
                   <Route path="/YoumeSetting" component={YoumeSetting} />
                   <Route path="/ConnectYoume" component={ConnectYoume}/>
                   <Route path="/SpeakerRecognization" component={SpeakerRecognization}/>
-                  <Redirect to="/not-found" />
               </Switch>
   )
 }

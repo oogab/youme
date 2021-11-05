@@ -13,6 +13,7 @@ const redis = require('redis')
 const RedisStore = require('connect-redis')(session)
 const { swaggerUI, specs } = require('./modules/swagger')
 
+
 dotenv.config()
 const redisClient = redis.createClient({
   url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
@@ -73,6 +74,7 @@ app.use(cors({
   origin: ['http://localhost:3000', 'https://myme.today'],
   credentials: true,
 }))
+
 
 app.use('/', indexRouter)
 app.use('/user', userRouter)
