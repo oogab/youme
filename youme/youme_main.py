@@ -7,6 +7,9 @@ import schedule
 import random
 import pygame
 
+# module
+import routine
+
 # pyqt5
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
@@ -156,13 +159,18 @@ def listen_print_loop(responses):
             if re.search(r'\b(명령 끝)\b', transcript, re.I):
                 print('Exiting..')
                 break
-            
-            if re.search(r'\b(오늘 루틴)\b', transcript, re.I):
+           
+            """
+            if re.search(r'\b(오늘 *[가-힣]* 루틴 알려 줘)\b', transcript, re.I):
                 headers = {'Content-Type': 'application/json; charset=utf-8'}
                 data = {'userId': user_id}
-                res = requests.post(url+'/youme/routine', headers=headers, data=json.dumps(data))
+                res = requests.post(url+'/routine', headers=headers, data=json.dumps(data))
                 print(res.text)
-                tts(res.text)
+                # tts(res.text)
+            """
+            if re.search(r'\b(루틴)\b', transcript, re.I):
+                script = routine.routine_query(transcript)
+                tts(script)
 
             elif re.search(r'\b(오늘 챌린지)\b', transcript, re.I):
                 headers = {'Content-Type' : 'application/json; charset=utf-8'}
@@ -216,7 +224,7 @@ def stt():
                 "$오늘 챌린지 알려줘",
                 "$오늘 루틴 알려줘",
                 "$오늘 일정 알려줘",
-                "$고마워"
+                "$고마워",
             ])
     client = speech.SpeechClient()
     config = speech.RecognitionConfig(
@@ -436,7 +444,7 @@ if __name__ == "__main__":
     screenWidget.setWindowFlags(Qt.FramelessWindowHint);
 
     # 프로그램 화면을 보여주는 코드
-    screenWidget.setGeometry(400, 400, 520, 500)
+    screenWidget.setGeometry(0, 0, 800, 480)
     screenWidget.show()
     app.setStyleSheet(dark_stylesheet)
     
