@@ -9,6 +9,7 @@ import pygame
 
 # module
 import routine
+import challenge
 
 # pyqt5
 from PyQt5 import QtCore
@@ -145,12 +146,11 @@ def listen_print_loop(responses):
             if re.search(r'\b(유미야)\b', transcript, re.I):
                 call_youme = True
                 global expression_index
-                expression_index = 1
+                expression_index = 2
                 pygame.mixer.music.load("youme_wake.mp3")
                 pygame.mixer.music.play()
                 while pygame.mixer.music.get_busy() == True:
                     continue
-                # os.system("mpg321 -g 20 youme_wake.mp3")
 
             num_chars_printed = 0
         else:
@@ -159,48 +159,35 @@ def listen_print_loop(responses):
             if re.search(r'\b(명령 끝)\b', transcript, re.I):
                 print('Exiting..')
                 break
-           
-            """
-            if re.search(r'\b(오늘 *[가-힣]* 루틴 알려 줘)\b', transcript, re.I):
-                headers = {'Content-Type': 'application/json; charset=utf-8'}
-                data = {'userId': user_id}
-                res = requests.post(url+'/routine', headers=headers, data=json.dumps(data))
-                print(res.text)
-                # tts(res.text)
-            """
+
             if re.search(r'\b(루틴)\b', transcript, re.I):
                 script = routine.routine_query(transcript)
                 tts(script)
 
-            elif re.search(r'\b(오늘 챌린지)\b', transcript, re.I):
-                headers = {'Content-Type' : 'application/json; charset=utf-8'}
-                data = {'userId' : user_id}
-                res = requests.post(url+'/youme/challenge', headers=headers, data=json.dumps(data))
-                print(res.text)
-                tts(res.text)
+            elif re.search(r'\b(챌린지)\b', transcript, re.I):
+                script = challenge.challenge_query(transcript)
+                tts(script)
+            
+            elif re.search(r'\b(일정)\b', transcript, re.I):
+                script = ''
+                tts(script)
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
-                expression_index = 2
+                expression_index = 3
                 rint = random.randrange(0, 2)
                 if rint == 0:
                     pygame.mixer.music.load("gwaenchan.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
-                        if mic is not None:
-                            mic.pause()
-                    if mic is not None:
-                        mic.resume()
-                    # os.system("mpg321 -g 20 gwaenchan.mp3")
+                        mic.pause()
+                    mic.resume()
                 else:
                     pygame.mixer.music.load("jaeil.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
-                        if mic is not None:
-                            mic.pause()
-                    if mic is not None:
-                        mic.resume()
+                        mic.pause()
+                    mic.resume()
 
-                    # os.system("mpg321 -g 20 jaeil.mp3")
             else:
                 headers = {
                     'Content-Type': 'application/json; charset=utf-8',
@@ -208,9 +195,8 @@ def listen_print_loop(responses):
                 data = {'message': transcript}
                 res = requests.post(url+'/youme/textQuery', headers=headers, data=json.dumps(data))
                 tts(res.text)
-                print('reply : ', res.text)
             call_youme = False
-            expression_index = 0
+            expression_index = 1
 
 def start_stt_t():
     stt_t = threading.Thread(target=stt)
@@ -230,7 +216,7 @@ def stt():
     config = speech.RecognitionConfig(
             encoding = 'LINEAR16',
             sample_rate_hertz = RATE,
-            max_alternatives = 1,
+            max_alternatives = 2,
             language_code = language_code,
             speech_contexts = [speech_context],
     )
@@ -248,6 +234,7 @@ def stt():
         listen_print_loop(responses)
 
 def tts(talk):
+    global mic
     # Instantiates a client
     client = texttospeech.TextToSpeechClient()
     
@@ -281,18 +268,23 @@ def tts(talk):
     pygame.mixer.music.load("output.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy() == True:
-        continue
+        mic.pause()
+    mic.resume()
 
     # os.system("mpg321 -g 20 output.mp3")
 
+"""
 class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.email = 'oogab@naver.com'
+        self.password = 'test123!'
         self.initLoginWindow()
-
+    
     def initLoginWindow(self):
         self.loginLayout = QVBoxLayout(self)
-
+        self.login()
+        
         self.loginEmailLayout = QHBoxLayout(self)
         self.loginEmailLabel = QLabel('Email')
         self.loginEmailInput = QLineEdit(self)
@@ -318,16 +310,18 @@ class LoginWindow(QWidget):
         self.loginLayout.addWidget(exitButton)
 
         self.setLayout(self.loginLayout)
-        # self.setGeometry(400, 400, 500, 500)
-
+        self.setGeometry(400, 400, 500, 500)
+        
+        self.setLayout(self.loginLayout)
         self.show()
 
     def login(self):
         global user_id
+
         # requests로 직접 접속도 가능하지만 요청 사항을 다루려면 세션을 만들어야 한다!
         with requests.Session() as session:
             headers = {'Content-Type' : 'application/json; charset=utf-8'}
-            data = {'email': str(self.loginEmailInput.text()), 'password': str(self.loginPasswordInput.text())}
+            data = {'email': self.email, 'password': self.password}
             with session.post(url+'/user/login', data=json.dumps(data), headers=headers) as response:
                 print("response text - ", str(response.text))
                 print("response headers - ", str(response.headers))
@@ -341,9 +335,10 @@ class LoginWindow(QWidget):
                     screenWidget.setCurrentIndex(screenWidget.currentIndex()+1)
                 else:
                     print('입력한 정보가 올바르지 않습니다!')
-
+    
     def close(self):
         return QCoreApplication.instance().quit()
+"""
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -353,15 +348,22 @@ class MainWindow(QWidget):
         self.timer.setInterval(300)
         self.timer.timeout.connect(self.timeout)
 
+        self.email = 'oogab@naver.com'
+        self.password = 'test123!'
+
         self.initMainWindow()
 
     def initMainWindow(self):
         self.timer.start()
-
-        # 0 : Normal
-        # 1 : Talk
-        # 2 : Smile
+        self.login()
+        
+        # 0 : Loading
+        # 1 : Normal
+        # 2 : Talk
+        # 3 : Smile
         self.expressionList = [
+            self.drawLoadingExpression,
+            # self.drawHeartExpression,
             self.drawNormalExpression,
             self.drawTalkExpression,
             self.drawSmileExpression
@@ -370,12 +372,36 @@ class MainWindow(QWidget):
         expression_index = 0
         self.mainLayout = QVBoxLayout()
 
-        self.logoutButton = QPushButton('로그아웃')
-        self.logoutButton.clicked.connect(self.logout)
+        # self.logoutButton = QPushButton('로그아웃')
+        # self.logoutButton.clicked.connect(self.logout)
 
-        self.mainLayout.addWidget(self.logoutButton)
+        # self.mainLayout.addWidget(self.logoutButton)
         self.setLayout(self.mainLayout)
         self.show()
+
+    def login(self):
+        global user_id
+        global expression_index
+
+        # requests로 직접 접속도 가능하지만 요청 사항을 다루려면 세션을 만들어야 한다!
+        with requests.Session() as session:
+            headers = {'Content-Type' : 'application/json; charset=utf-8'}
+            data = {'email': self.email, 'password': self.password}
+            with session.post(url+'/user/login', data=json.dumps(data), headers=headers) as response:
+                # print("response text - ", str(response.text))
+                # print("response headers - ", str(response.headers))
+                # print("response cookies - ", str(response.cookies))
+                cookies = response.cookies
+                headers = session.headers
+                user_id = response.json()["id"]
+
+                if response.status_code == 200:
+                    print('로그인 성공!')
+                    expression_index = 1
+                    # screenWidget.setCurrentIndex(screenWidget.currentIndex()+1)
+                else:
+                    print('입력한 정보가 올바르지 않습니다!')
+ 
 
     def paintEvent(self, event):
         paint = QPainter()
@@ -383,6 +409,13 @@ class MainWindow(QWidget):
         # index만 바꿔가며 실행하면 된다.
         self.expressionList[expression_index](paint)
         paint.end()
+
+    def drawLoadingExpression(self, paint):
+        paint.setBrush(QColor(Qt.white))
+        paint.setPen(QPen(Qt.white, 5))
+        paint.drawArc(100, 100, 100, 100, 180 * 16, 180 * 16)
+        paint.drawArc(340, 100, 100, 100, 180 * 16, 180 * 16)
+        paint.drawArc(160, 200, 200, 160, 180 * 16, 180 * 16)
 
     def drawNormalExpression(self, paint):
         paint.setBrush(QColor(Qt.white))
@@ -399,23 +432,41 @@ class MainWindow(QWidget):
         paint.drawChord(160, 200, 200, 160, 180 * 16, 180 * 16)
 
     def drawSmileExpression(self, paint):
-        # paint.setBrush(QColor(Qt.white))
+        paint.setBrush(QColor(Qt.white))
         paint.setPen(QPen(Qt.white, 5))
         paint.drawArc(100, 150, 100, 100, 0 * 16, 180 * 16)
         paint.drawArc(320, 150, 100, 100, 0 * 16, 180 * 16)
         paint.drawArc(160, 200, 200, 160, 180 * 16, 180 * 16)
 
+    def drawHeartExpression(self, paint):
+        paint.setBrush(QColor(Qt.white))
+        paint.setPen(QPen(Qt.white, 5))
+        paint.drawArc(100, 130, 50, 50, 0 * 16, 180 * 16)
+        paint.drawArc(150, 130, 50, 50, 0 * 16, 180 * 16)
+        paint.drawArc(100, 105, 100, 100, 180 * 16, 90 * 16) 
+        paint.drawArc(100, 105, 100, 100, 270 * 16, 90 * 16)
+        paint.drawArc(340, 130, 50, 50, 0 * 16, 180 * 16)
+        paint.drawArc(390, 130, 50, 50, 0 * 16, 180 * 16)
+        paint.drawArc(340, 105, 100, 100, 180 * 16, 90 * 16) 
+        paint.drawArc(340, 105, 100, 100, 270 * 16, 90 * 16)
+        paint.drawLine(245, 200, 100, 250)
+        paint.drawLine(245, 200, 390, 250)
+        paint.drawLine(100, 250, 390, 250)
+        
+
     def timeout(self):
-        global expression_index
+        # global expression_index
         # print(expression_index)
         # PyQt5는 QTimer를 구현하기만 하면 타이머가 트리거 될 때마다
         # self.update()를 사용하며 드로잉을 업데이트하고 원하는 위치로 업데이트 할 수 있다.
         self.update()
 
+    """
     def logout(self):
         global user_id
         screenWidget.setCurrentIndex(screenWidget.currentIndex()-1)
         user_id = ''
+    """
 
     def net(self):
         headers = {'Content-Type' : 'application/json; charset=utf-8'}
@@ -435,11 +486,11 @@ if __name__ == "__main__":
     screenWidget = QStackedWidget()
 
     # 레이아웃 인스턴스 생성
-    loginWindow = LoginWindow()
+    # loginWindow = LoginWindow()
     mainWindow = MainWindow()
 
     # Widget 추가
-    screenWidget.addWidget(loginWindow)
+    # screenWidget.addWidget(loginWindow)
     screenWidget.addWidget(mainWindow)
     screenWidget.setWindowFlags(Qt.FramelessWindowHint);
 
