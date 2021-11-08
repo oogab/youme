@@ -20,6 +20,9 @@ const initialState = {
   entrollSpeakerLoading:false,
   entrollSpeakerDone:false,
   entrollSpeakerError:null,
+  deleteSpeakerLoading:false,
+  deleteSpeakerDone:false,
+  deleteSpeakerError:null,
   logOutLoading: false,
   logOutDone: false,
   logOutError: null,
@@ -46,10 +49,17 @@ export const LOG_IN_FAILURE = 'LOG_IN_FAILURE'
 export const CREATE_SPEAKER_ID_REQUEST = 'CREATE_SPEAKER_ID_REQUEST'
 export const CREATE_SPEAKER_ID_SUCCESS = 'CREATE_SPEAKER_ID_SUCCESS'
 export const CREATE_SPEAKER_ID_FAILURE = 'CREATE_SPEAKER_ID_FAILURE'
+export const CLEAR_CREATE_SPEAKER_ID = 'CLEAR_CREATE_SPEAKER_ID'
 
 export const ENTROLL_SPEAKER_REQUEST = 'ENTROLL_SPEAKER_REQUEST'
 export const ENTROLL_SPEAKER_SUCCESS = 'ENTROLL_SPEAKER_SUCCESS'
 export const ENTROLL_SPEAKER_FAILURE = 'ENTROLL_SPEAKER_FAILURE'
+export const CLEAR_ENTROLL_SPEAKER_ID = 'CLEAR_ENTROLL_SPEAKER_ID'
+
+export const DELETE_SPEAKER_REQUEST = 'DELETE_SPEAKER_REQUEST'
+export const DELETE_SPEAKER_SUCCESS = 'DELETE_SPEAKER_SUCCESS'
+export const DELETE_SPEAKER_FAILURE = 'DELETE_SPEAKER_FAILURE'
+export const CLEAR_DELETE_SPEAKER_ID = 'CLEAR_DELETE_SPEAKER_ID'
 
 export const GET_YOUME_INFO_REQUEST = 'GET_YOUME_INFO_REQUEST'
 export const GET_YOUME_INFO_SUCCESS = 'GET_YOUME_INFO_SUCCESS'
@@ -187,6 +197,10 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.createSpeakerIdLoading=false
       draft.createSpeakerIdError=action.error
       console.log(action.error)
+    case CLEAR_CREATE_SPEAKER_ID:
+      draft.createSpeakerIdLoading=false
+      draft.createSpeakerIdDone=false
+      draft.createSpeakerIdError=null
     case ENTROLL_SPEAKER_REQUEST:
       draft.entrollSpeakerLoading=true
       draft.entrollSpeakerDone=false
@@ -201,6 +215,30 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.entrollSpeakerLoading=false
       draft.entrollSpeakerError=action.error
       console.log(action.error)
+      break
+    case CLEAR_ENTROLL_SPEAKER_ID:
+      draft.entrollSpeakerLoading=false
+      draft.entrollSpeakerDone=false
+      draft.createSpeakerIdError=null
+    case DELETE_SPEAKER_REQUEST:
+      draft.deleteSpeakerLoading=true
+      draft.deleteSpeakerDone=false
+      draft.deleteSpeakerError=null
+      break
+    case DELETE_SPEAKER_SUCCESS:
+      draft.deleteSpeakerDone=true
+      draft.deleteSpeakerLoading=false
+      draft.youmeInfo.connectedSpeaker=false
+      draft.youmeInfo.SpeakerId=null
+      break
+    case DELETE_SPEAKER_FAILURE:
+      draft.deleteSpeakerLoading=false
+      draft.deleteSpeakerError=action.error
+      break
+    case CLEAR_DELETE_SPEAKER_ID:
+      draft.deleteSpeakerLoading=false
+      draft.deleteSpeakerDone=false
+      draft.deleteSpeakerError=null
       break
     case CHANGE_SIGN_UP_MODE:
       draft.isSignUp = !draft.isSignUp

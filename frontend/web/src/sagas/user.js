@@ -20,6 +20,9 @@ import {
   ENTROLL_SPEAKER_REQUEST,
   ENTROLL_SPEAKER_SUCCESS,
   ENTROLL_SPEAKER_FAILURE,
+  DELETE_SPEAKER_REQUEST,
+  DELETE_SPEAKER_SUCCESS,
+  DELETE_SPEAKER_FAILURE,
   LOG_OUT_REQUEST,
   LOG_OUT_SUCCESS,
   LOG_OUT_FAILURE,
@@ -309,7 +312,6 @@ function* signUp(action) {
   }
 }
 function createSpeakerIdAPI(){
-  console.log(process.env.REACT_APP_AZURE_ENDPOINT)
   return axios.post('/usersYoume/profile')
 }
 function* createSpeakerId(){
@@ -329,7 +331,6 @@ function* createSpeakerId(){
 function entrollSpeakerAPI(data){
   return axios.post('/usersYoume/entroll',
   data,
-  {headers:{'Content-type':'multipart/form-data'}}
   )
 }
 function* entrollSpeaker(action){
@@ -342,6 +343,24 @@ function* entrollSpeaker(action){
   }catch(err){
     yield put({
       type:ENTROLL_SPEAKER_FAILURE,
+      error:err
+    })
+  }
+}
+
+function deleteSpeakerAPI(){
+  return axios.delete('/usersYoume/profile')
+}
+function* deleteSpeaker(){
+  try{
+    const result = yield call(deleteSpeakerAPI)
+    yield put({
+      type:DELETE_SPEAKER_SUCCESS,
+      data:result
+    })
+  }catch(err){
+    yield put({
+      type:DELETE_SPEAKER_FAILURE,
       error:err
     })
   }
@@ -403,6 +422,9 @@ function* watchCreateSpeakerId(){
 function* watchEntrollSpeaker(){
   yield takeLatest(ENTROLL_SPEAKER_REQUEST, entrollSpeaker)
 }
+function* watchDeleteSpeaker(){
+  yield takeLatest(DELETE_SPEAKER_REQUEST, deleteSpeaker)
+}
 export default function* userSaga() {
   yield all([
       fork(watchLogIn),
@@ -411,6 +433,7 @@ export default function* userSaga() {
       fork(watchGetYoumeInfo),
       fork(watchCreateSpeakerId),
       fork(watchEntrollSpeaker),
+      fork(watchDeleteSpeaker),
       // fork(watchFollow),
       // fork(watchUnfollow),
       // fork(watchLoadUser),

@@ -9,12 +9,12 @@ const storage = multer.diskStorage({
       cb(null, 'uploads/') // cb 콜백함수를 통해 전송된 파일 저장 디렉토리 설정
     },
     filename: function (req, file, cb) {
-      cb(null, 'hello.wav') // cb 콜백함수를 통해 전송된 파일 이름 설정
+      cb(null, 'hello2.wav') // cb 콜백함수를 통해 전송된 파일 이름 설정
     }
 })
 const fs = require('fs')
-const upload = multer({ storage: storage })
-
+const upload = multer({ storage: storage }).single('file')
+var XMLHttpRequest = require('xhr2');
 
 const customAxios = axios.create({
     baseURL: process.env.AZURE_ENDPOINT,
@@ -55,10 +55,8 @@ router.post('/profile', isLoggedIn, async (req, res, next)=>{
         next(error)
     }
 })
-
-router.post('/entroll',isLoggedIn, upload.single('file'),  async (req, res, next)=>{
+router.delete('/profile', isLoggedIn, async(req,res,next)=>{
     try{
-        let audio = fs.createReadStream('uploads/hello.wav')
         const speakerId = await UsersYoume.findOne({
             attributes:['SpeakerId']
         },{
@@ -66,17 +64,64 @@ router.post('/entroll',isLoggedIn, upload.single('file'),  async (req, res, next
                 UserId : req.user.UserId
             }
         })
-        const result = await customAxios({
-            method:'post',
-            url:'/speaker/identification/v2.0/text-independent/profiles/'+speakerId.SpeakerId+'/enrollments',
-            headers:{'Content-Type': 'multipart/form-data'},
-            body:{audioData : audio}
+
+        await UsersYoume.update({
+            connectedSpeaker: false,
+            SpeakerId : null,
+        },{
+            where: {UserId: req.user.id}
         })
 
-        res.status(200).send(result)
+        await customAxios({
+            method:'delete',
+            url:'/speaker/identification/v2.0/text-independent/profiles/'+speakerId.SpeakerId,
+        })
+
+        res.status(200).send('success')
     }catch (error) {
-        console.log(error.response.data)
+        console.error(error)
         next(error)
     }
 })
+router.post('/entroll',isLoggedIn, upload,  async (req, res, next)=>{
+    try{
+        let audio = fs.readFileSync('uploads/hello2.wav')
+        const speakerId = await UsersYoume.findOne({
+            attributes:['SpeakerId']
+        },{
+            where:{
+                UserId : req.user.UserId
+            }
+        })
+        enrollProfileAudio(audio, speakerId.SpeakerId)
+        res.status(200).send('success')
+    }catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+const enrollIdentificationProfileEndpoint = (profileId) => `${process.env.AZURE_ENDPOINT}/speaker/identification/v2.0/text-independent/profiles/${profileId}/enrollments?ignoreMinLength=true`;
+
+function enrollProfileAudio(blob, profileId){
+  
+    var request = new XMLHttpRequest();
+    var json = null
+    request.open("POST", enrollIdentificationProfileEndpoint(profileId), true);
+    request.setRequestHeader('Ocp-Apim-Subscription-Key', process.env.AZURE_KEY);
+    request.onload = function () {
+        console.log('enrolling');
+        
+      if (request.status==200 || request.status==201) {
+          json = JSON.parse(request.responseText);
+          console.log(json);
+      } else {
+          console.log(`Failed to submit for enrollment: got a ${request.status} response code.`);
+          json = JSON.parse(request.responseText);
+          console.log(`${json.error.code}: ${json.error.message}`);
+      }
+    };  
+    request.send(blob);
+
+    
+  }
 module.exports = router
