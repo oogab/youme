@@ -10,6 +10,7 @@ import pygame
 # module
 import routine
 import challenge
+import weather
 
 # pyqt5
 from PyQt5 import QtCore
@@ -170,6 +171,10 @@ def listen_print_loop(responses):
             
             elif re.search(r'\b(일정)\b', transcript, re.I):
                 script = ''
+                tts(script)
+            
+            elif re.search(r'\b(날씨)\b', transcript, re.I):
+                script = weather.weather_query(transcript)
                 tts(script)
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
