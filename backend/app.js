@@ -31,6 +31,30 @@ const habitRouter = require('./routes/habit')
 const scheduleRouter = require('./routes/schedule')
 const weatherRouter = require('./routes/weather')
 const UsersYoumeRouter = require('./routes/usersYoume')
+const http = require("http").createServer(app);
+const io = require('socket.io')(http, { cors: { origin: ['http://localhost:3000', 'https://myme.today'],credentials: true },
+allowEIO3: true,
+allowEI04: true,
+});
+
+let port=8000
+
+io.on("connection", function (socket) {
+  console.log("소켓 접속 완료");
+
+  socket.on("roomjoin", (userid) => {  //roomjoin 이벤트명으로 데이터받기 //socket.on
+    console.log(userid);
+    socket.join(userid);               //userid로 방 만들기
+  });
+
+  socket.on("turtlebot", (data) => {  //alet 이벤트로 데이터 받기 
+    io.to("turtlebot").emit("turtlebot",data);  //touserid: 클라이언트1이 보낸데이터"hwi"
+  });                                             //heejewake이벤트: hwi 에게 메시지 hwi를 보낸다
+});                                              
+
+http.listen(port, () => {
+  console.log(`express is running on ${port}`);
+});
 
 app.set('port', process.env.PORT || 3065)
 passportConfig()
