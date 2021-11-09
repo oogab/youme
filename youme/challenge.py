@@ -6,27 +6,42 @@ import datetime
 import requests
 import random
 import json
+import pygame
+
+import take_photo
+import upload
 
 user_id = 3
 headers = {'Content-Type': 'application/json; charset=utf-8'}
 data = {'userId': user_id}
 url = 'http://112.169.87.3:8005'
 
+pygame.mixer.init()
+pygame.mixer.music.set_volume(0.3)
+
 todayChallenges = []
 tomorrowChallenges = []
 
 # 챌린지 관련 쿼리 처리 허브
 def challenge_query(transcript):
-    if re.search(r'\b((전체|모든|내) 챌린지 알려 줘)\b', transcript, re.I):
+    if re.search(r'\b((전체|모든|내) 챌린지)\b', transcript, re.I):
         script = all_challenge()
         return script
 
-    elif re.search(r'\b(오늘 *[가-힣]* 챌린지 알려 줘)\b', transcript, re.I):
+    elif re.search(r'\b(오늘 챌린지)\b', transcript, re.I):
         script = today_challenge()
         return script
 
-    elif re.search(r'\b(오늘 오전 챌린지 알려 줘)\b', transcript, re.I):
+    elif re.search(r'\b(오늘 오전 챌린지)\b', transcript, re.I):
         script = today_morning_challenge()
+        return script
+
+    elif re.search(r'\b((챌|첼)린지 [0-9]번 인증)\b', transcript, re.I):
+        challenge_num = int(transcript.split()[1][0])
+        if challenge_num <= 0:
+            script = '응답 챌린지 번호를 확인해 주세요.'
+        else:
+            script = certify_challenge(challenge_num-1)
         return script
 
     script = '응답 무슨 말인지 모르겠어요'
@@ -62,5 +77,34 @@ def today_challenge():
     todayChallengeNames = [todayChallenge['name'] for todayChallenge in todayChallenges]
 
     script = '응답 오늘 챌린지는' + str(todayChallengeNames) + '입니다.'
-    print(script)
+    return script
+
+def certify_challenge(challenge_num):
+    global todayChallenges
+
+    if len(todayChallenges) == 0:
+        return '응답 오늘 챌린지 목록을 먼저 확인하세요.'
+
+    pygame.mixer.music.load("./replyMP3/capture.mp3")
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True:
+        continue
+
+    photo = take_photo.take_photo()
+    s3_address = upload.upload_photo(photo)
+    
+    challenge_id = todayChallenges[challenge_num]['id']
+    certify_date = str(datetime.date.today())
+    print(certify_date)
+
+    certify_data = {
+        'userId' : user_id,
+        'challengeId' : challenge_id,
+        'img_addr' : s3_address,
+        'content' : '인증합니다.',
+        'certification_datetime' : certify_date,
+    }
+    res = requests.post(url+'/challenge/certify', headers=headers, data=json.dumps(certify_data))
+    script = res.text
+
     return script

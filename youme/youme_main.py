@@ -148,7 +148,7 @@ def listen_print_loop(responses):
                 call_youme = True
                 global expression_index
                 expression_index = 2
-                pygame.mixer.music.load("youme_wake.mp3")
+                pygame.mixer.music.load("./replyMP3/youme_wake.mp3")
                 pygame.mixer.music.play()
                 while pygame.mixer.music.get_busy() == True:
                     continue
@@ -165,7 +165,7 @@ def listen_print_loop(responses):
                 script = routine.routine_query(transcript)
                 tts(script)
 
-            elif re.search(r'\b(챌린지)\b', transcript, re.I):
+            elif re.search(r'\b((챌|첼)린지)\b', transcript, re.I):
                 script = challenge.challenge_query(transcript)
                 tts(script)
             
@@ -181,13 +181,13 @@ def listen_print_loop(responses):
                 expression_index = 3
                 rint = random.randrange(0, 2)
                 if rint == 0:
-                    pygame.mixer.music.load("gwaenchan.mp3")
+                    pygame.mixer.music.load("./replyMP3/gwaenchan.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
                         mic.pause()
                     mic.resume()
                 else:
-                    pygame.mixer.music.load("jaeil.mp3")
+                    pygame.mixer.music.load("./replyMP3/jaeil.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
                         mic.pause()
@@ -215,6 +215,9 @@ def stt():
                 "$오늘 챌린지 알려줘",
                 "$오늘 루틴 알려줘",
                 "$오늘 일정 알려줘",
+                "$챌린지",
+                "$3번 챌린지 인증",
+                "$4번 챌린지 인증",
                 "$고마워",
             ])
     client = speech.SpeechClient()
@@ -276,7 +279,6 @@ def tts(talk):
         mic.pause()
     mic.resume()
 
-    # os.system("mpg321 -g 20 output.mp3")
 
 """
 class LoginWindow(QWidget):

@@ -32,8 +32,8 @@ def routine_query(transcript):
         script = today_morning_routine()
         return script
 
-    elif re.search(r'\b(오늘 [0-9]번 루틴 습관 알려 줘)\b', transcript, re.I):
-        routine_num = int(transcript.split()[1][0])
+    elif re.search(r'\b([1-9]번 루틴 습관 알려 줘)\b', transcript, re.I):
+        routine_num = int(transcript.split()[0][0])
         if routine_num <= 0:
             script = '응답 루틴 번호를 확인해 주세요.'
         else:
@@ -89,8 +89,7 @@ def check_routinized_habit(routine_num):
     global todayRoutines
 
     if len(todayRoutines) == 0:
-        script = '응답 오늘 루틴 목록을 먼저 확인해주세요!'
-        return script
+        return '응답 오늘 루틴 목록을 먼저 확인해주세요!'
 
     routinized_habit = [habit['Habit']['name'] for habit in todayRoutines[routine_num]['RoutinizedHabits']]
     script = '응답 ' + str(routine_num+1) + '번 루틴 습관은' + str(routinized_habit) + '입니다.'
