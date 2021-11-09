@@ -18,7 +18,7 @@ router.post('/login', async (req, res, next) => {
     const isValid = await bcrypt.compare(password, user.password)
     if (!isValid) throw new Error('입력하신 정보가 올바르지 않습니다.')
     req.session.userid = user.id
-    return res.send('success!')
+    return res.status(200).json({id: user.id})
   } catch (error) {
     console.error(error)
     next(error)

@@ -17,36 +17,36 @@ const sessionPath = sessionClient.sessionPath(projectId, sessionId)
 
 const router = express.Router()
 
-router.post('/', (req, res, next) => {
-  try {
-    console.log(req.body.message)
-    res.send(req.body.message.trim())
-  } catch (error) {
-    console.error(error)
-    next(error)
-  }
-})
+// router.post('/', (req, res, next) => {
+//   try {
+//     console.log(req.body.message)
+//     res.send(req.body.message.trim())
+//   } catch (error) {
+//     console.error(error)
+//     next(error)
+//   }
+// })
 
-router.post('/routine', async (req, res, next) => {
-  const userId = req.body.userId
+// router.post('/routine', async (req, res, next) => {
+//   const userId = req.body.userId
   
-  try {
-    const routines = await Routine.findAll({
-      where: { UserId: userId }
-    })
-    if (!routines) {
-      return res.status(400).send('응답 오늘 루틴이 없습니다!')
-    }
-    const routine_list = routines.map((routine) => routine.dataValues.name)
-    talk = `응답 오늘 루틴은 ${routine_list} 입니다.`
-    console.log(talk)
+//   try {
+//     const routines = await Routine.findAll({
+//       where: { UserId: userId }
+//     })
+//     if (!routines) {
+//       return res.status(400).send('응답 오늘 루틴이 없습니다!')
+//     }
+//     const routine_list = routines.map((routine) => routine.dataValues.name)
+//     talk = `응답 오늘 루틴은 ${routine_list} 입니다.`
+//     console.log(talk)
 
-    return res.status(200).send(talk)
-  } catch (error) {
-    console.error(error)
-    next(error)
-  }
-})
+//     return res.status(200).send(talk)
+//   } catch (error) {
+//     console.error(error)
+//     next(error)
+//   }
+// })
 
 router.post('/challenge', async (req, res, next) => {
   const userId = req.body.userId
@@ -75,7 +75,7 @@ router.post('/textQuery', async (req, res) => {
     session: sessionPath,
     queryInput: {
       text: {
-        text: req.body.text,
+        text: req.body.message.trim(),
         languageCode: languageCode
       }
     }
@@ -83,13 +83,13 @@ router.post('/textQuery', async (req, res) => {
 
   // Send request and log result
   const responses = await sessionClient.detectIntent(request)
+  console.log(responses[0].queryResult.diagnosticInfo)
   console.log('Detected intent')
   const result = responses[0].queryResult
   console.log(`Query: ${result.queryText}`)
-  console.log(`Response: ${result.fulfilmentText}`)
+  console.log(`Response: ${result.fulfillmentText}`)
 
-  console.log(result)
-  // res.send(result)
+  res.send('응답 ' + result.fulfillmentText)
 })
 
 module.exports = router
