@@ -12,6 +12,7 @@ const indexRouter = require('./routes');
 const userRouter = require('./routes/user')
 const routineRouter = require('./routes/routine')
 const challengeRouter = require('./routes/challenge')
+const scheduleRouter = require('./routes/schedule')
 const weatherRouter = require('./routes/weather')
 const youmeRouter = require('./routes/youme')
 
@@ -44,18 +45,9 @@ app.use('/', indexRouter);
 app.use('/user', userRouter)
 app.use('/routine', routineRouter)
 app.use('/challenge', challengeRouter)
+app.use('/schedule', scheduleRouter)
 app.use('/weather', weatherRouter)
 app.use('/youme', youmeRouter)
-
-// app.use('/youme', (req, res, next) => {
-//   try {
-//     console.log(req.body.message)
-//     res.send('reply')
-//   } catch (error) {
-//     console.error(error)
-//     next(error)
-//   }
-// })
 
 app.use((req, res, next) => {
   const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);

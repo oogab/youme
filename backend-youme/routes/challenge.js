@@ -56,6 +56,8 @@ router.post('/today', async (req, res, next) => {
       where: { UserId: userId },
       include: [{
         model: ChallengeCertificationDay
+      }, {
+        model: ChallengeParticipation
       }]
     })
     if (!challenges) {
@@ -92,7 +94,7 @@ router.post('/certify', async (req, res, next) => {
     const challengeParticipation = await ChallengeParticipation.findOne({
       where: { ChallengeId: req.body.challengeId, UserId: req.body.userId }
     })
-    console.log(challengeParticipation.id)
+    // console.log(challengeParticipation.id)
     const exDailyCertifyChallenge = await DailyCertifyChallenge.findOne({
       where: { ChallengeParticipationId: challengeParticipation.id, certification_datetime: req.body.certification_datetime }
     })
