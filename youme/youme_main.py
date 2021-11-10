@@ -252,6 +252,7 @@ def stt():
 
 def tts(talk):
     global mic
+    global expression_index
     # Instantiates a client
     client = texttospeech.TextToSpeechClient()
     
@@ -284,9 +285,18 @@ def tts(talk):
     # 생성된 output.mp3 파일 실행
     pygame.mixer.music.load("output.mp3")
     pygame.mixer.music.play()
-    # while pygame.mixer.music.get_busy() == True:
+    while pygame.mixer.music.get_busy() == True:
+        normalTalking() 
     #     mic.pause()
     # mic.resume()
+
+def normalTalking():
+    global mic
+    global expression_index
+    expression_index = 2
+    time.sleep(0.3)
+    expression_index = 1
+    time.sleep(0.3)
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -307,12 +317,10 @@ class MainWindow(QWidget):
         # 2 : Talk
         # 3 : Smile
         self.expressionList = [
-            self.drawLoadingExpression,
+            expression.drawLoadingExpression,
             expression.drawNormalExpression,
-            # self.drawHeartExpression,
-            # self.drawNormalExpression,
-            self.drawTalkExpression,
-            self.drawSmileExpression
+            expression.drawTalkExpression,
+            expression.drawSmileExpression
         ]
 
         expression_index = 0
@@ -328,6 +336,7 @@ class MainWindow(QWidget):
         self.expressionList[expression_index](paint)
         paint.end()
 
+    """
     def drawLoadingExpression(self, paint):
         paint.setBrush(QColor(Qt.white))
         paint.setPen(QPen(Qt.white, 5))
@@ -370,7 +379,7 @@ class MainWindow(QWidget):
         paint.drawLine(245, 200, 100, 250)
         paint.drawLine(245, 200, 390, 250)
         paint.drawLine(100, 250, 390, 250)
-        
+    """    
 
     def timeout(self):
         # global expression_index
