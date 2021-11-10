@@ -44,7 +44,7 @@ def challenge_query(transcript):
             script = certify_challenge(challenge_num-1)
         return script
 
-    script = '응답 무슨 말인지 모르겠어요'
+    script = '응답 무슨 말인지 모르겠어요.'
     return script
 
 # 전체 챌린지 목록 확인
@@ -56,6 +56,7 @@ def all_challenge():
     challenges = res.json()
     allChallenges = [challenge['name'] for challenge in challenges]
 
+    
     script = '응답 전체 챌린지는' + str(allChallenges) + '입니다.'
     return script
 
@@ -74,7 +75,9 @@ def today_challenge():
             if challenge['ChallengeCertificationDays'][datetime.datetime.today().weekday()]['certification_available'] == True:
                 todayChallenges.append(challenge)
 
+    print(todayChallenges)
     todayChallengeNames = [todayChallenge['name'] for todayChallenge in todayChallenges]
+    
 
     script = '응답 오늘 챌린지는' + str(todayChallengeNames) + '입니다.'
     return script
@@ -95,7 +98,7 @@ def certify_challenge(challenge_num):
     
     challenge_id = todayChallenges[challenge_num]['id']
     certify_date = str(datetime.date.today())
-    print(certify_date)
+    # print(certify_date)
 
     certify_data = {
         'userId' : user_id,
@@ -105,6 +108,8 @@ def certify_challenge(challenge_num):
         'certification_datetime' : certify_date,
     }
     res = requests.post(url+'/challenge/certify', headers=headers, data=json.dumps(certify_data))
-    script = res.text
+    if res.status_code == 200:
+        todayChallenges[challenge_num]['ChallengeParticipations'][0]['certification_count'] += 1
 
+    script = res.text
     return script
