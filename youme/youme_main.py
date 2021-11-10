@@ -12,6 +12,7 @@ import challenge
 import weather
 import mySchedule
 import search 
+import expression
 
 # pyqt5
 from PyQt5 import QtCore
@@ -20,11 +21,11 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
 import qdarkstyle
-from datetime import datetime
 
 # network connection
 # import gspeech
 from google.cloud import speech, texttospeech
+from datetime import datetime
 import pyaudio
 import queue
 import asyncio
@@ -295,11 +296,6 @@ class MainWindow(QWidget):
         self.timer.setInterval(300)
         self.timer.timeout.connect(self.timeout)
     
-        """
-        self.email = 'oogab@naver.com'
-        self.password = 'test123!'
-        """
-
         self.initMainWindow()
 
     def initMainWindow(self):
@@ -312,8 +308,9 @@ class MainWindow(QWidget):
         # 3 : Smile
         self.expressionList = [
             self.drawLoadingExpression,
+            expression.drawNormalExpression,
             # self.drawHeartExpression,
-            self.drawNormalExpression,
+            # self.drawNormalExpression,
             self.drawTalkExpression,
             self.drawSmileExpression
         ]
@@ -321,33 +318,8 @@ class MainWindow(QWidget):
         expression_index = 0
         self.mainLayout = QVBoxLayout()
 
-        # self.logoutButton = QPushButton('로그아웃')
-        # self.logoutButton.clicked.connect(self.logout)
-
-        # self.mainLayout.addWidget(self.logoutButton)
         self.setLayout(self.mainLayout)
         self.show()
-
-    """
-    def login(self):
-        global user_id
-        global expression_index
-
-        # requests로 직접 접속도 가능하지만 요청 사항을 다루려면 세션을 만들어야 한다!
-        with requests.Session() as session:
-            headers = {'Content-Type' : 'application/json; charset=utf-8'}
-            data = {'email': self.email, 'password': self.password}
-            with session.post(url+'/user/login', data=json.dumps(data), headers=headers) as response:
-                cookies = response.cookies
-                headers = session.headers
-                user_id = response.json()["id"]
-
-                if response.status_code == 200:
-                    print('로그인 성공!')
-                    expression_index = 1
-                else:
-                    print('입력한 정보가 올바르지 않습니다!')
-    """
 
     def paintEvent(self, event):
         paint = QPainter()
@@ -407,13 +379,6 @@ class MainWindow(QWidget):
         # self.update()를 사용하며 드로잉을 업데이트하고 원하는 위치로 업데이트 할 수 있다.
         self.update()
 
-    """
-    def logout(self):
-        global user_id
-        screenWidget.setCurrentIndex(screenWidget.currentIndex()-1)
-        user_id = ''
-    """
-
     def net(self):
         headers = {'Content-Type' : 'application/json; charset=utf-8'}
         print(user_id)
@@ -452,11 +417,9 @@ if __name__ == "__main__":
     screenWidget = QStackedWidget()
 
     # 레이아웃 인스턴스 생성
-    # loginWindow = LoginWindow()
     mainWindow = MainWindow()
 
     # Widget 추가
-    # screenWidget.addWidget(loginWindow)
     screenWidget.addWidget(mainWindow)
     screenWidget.setWindowFlags(Qt.FramelessWindowHint);
 
