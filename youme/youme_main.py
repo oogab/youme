@@ -11,6 +11,7 @@ import pygame
 import routine
 import challenge
 import weather
+import schedule
 
 # pyqt5
 from PyQt5 import QtCore
@@ -170,7 +171,7 @@ def listen_print_loop(responses):
                 tts(script)
             
             elif re.search(r'\b(일정)\b', transcript, re.I):
-                script = ''
+                script = schedule.schedule_query(transcript)
                 tts(script)
             
             elif re.search(r'\b(날씨)\b', transcript, re.I):
@@ -279,74 +280,6 @@ def tts(talk):
         mic.pause()
     mic.resume()
 
-
-"""
-class LoginWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.email = 'oogab@naver.com'
-        self.password = 'test123!'
-        self.initLoginWindow()
-    
-    def initLoginWindow(self):
-        self.loginLayout = QVBoxLayout(self)
-        self.login()
-        
-        self.loginEmailLayout = QHBoxLayout(self)
-        self.loginEmailLabel = QLabel('Email')
-        self.loginEmailInput = QLineEdit(self)
-        self.loginEmailLayout.addWidget(self.loginEmailLabel)
-        self.loginEmailLayout.addWidget(self.loginEmailInput)
-        self.loginLayout.addLayout(self.loginEmailLayout)
-
-        self.loginPasswordLayout = QHBoxLayout(self)
-        self.loginPasswordLabel = QLabel('Password')
-        self.loginPasswordInput = QLineEdit(self)
-        self.loginPasswordLayout.addWidget(self.loginPasswordLabel)
-        self.loginPasswordLayout.addWidget(self.loginPasswordInput)
-        self.loginLayout.addLayout(self.loginPasswordLayout)
-
-        loginButton = QPushButton('로그인', self)
-        loginButton.setFixedSize(500, 30)
-        loginButton.clicked.connect(self.login)
-        self.loginLayout.addWidget(loginButton)
-
-        exitButton = QPushButton('프로그램 종료', self)
-        exitButton.setFixedSize(500, 30)
-        exitButton.clicked.connect(self.close)
-        self.loginLayout.addWidget(exitButton)
-
-        self.setLayout(self.loginLayout)
-        self.setGeometry(400, 400, 500, 500)
-        
-        self.setLayout(self.loginLayout)
-        self.show()
-
-    def login(self):
-        global user_id
-
-        # requests로 직접 접속도 가능하지만 요청 사항을 다루려면 세션을 만들어야 한다!
-        with requests.Session() as session:
-            headers = {'Content-Type' : 'application/json; charset=utf-8'}
-            data = {'email': self.email, 'password': self.password}
-            with session.post(url+'/user/login', data=json.dumps(data), headers=headers) as response:
-                print("response text - ", str(response.text))
-                print("response headers - ", str(response.headers))
-                print("response cookies - ", str(response.cookies))
-                cookies = response.cookies
-                headers = session.headers
-                user_id = response.json()["id"]
-
-                if response.status_code == 200:
-                    print('로그인 성공!')
-                    screenWidget.setCurrentIndex(screenWidget.currentIndex()+1)
-                else:
-                    print('입력한 정보가 올바르지 않습니다!')
-    
-    def close(self):
-        return QCoreApplication.instance().quit()
-"""
-
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -426,24 +359,24 @@ class MainWindow(QWidget):
 
     def drawNormalExpression(self, paint):
         paint.setBrush(QColor(Qt.white))
-        paint.drawEllipse(100, 100, 80, 120)
-        paint.drawEllipse(340, 100, 80, 120)
+        paint.drawEllipse(250, 100, 80, 120)
+        paint.drawEllipse(470, 100, 80, 120)
         paint.setPen(QPen(Qt.white, 5))
-        paint.drawArc(160, 200, 200, 160, 180 * 16, 180 * 16)
+        paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
 
     def drawTalkExpression(self, paint):
         paint.setBrush(QColor(Qt.white))
-        paint.drawEllipse(100, 100, 80, 120)
-        paint.drawEllipse(340, 100, 80, 120)
+        paint.drawEllipse(250, 100, 80, 120)
+        paint.drawEllipse(470, 100, 80, 120)
         paint.setPen(QPen(Qt.white, 5))
-        paint.drawChord(160, 200, 200, 160, 180 * 16, 180 * 16)
+        paint.drawChord(300, 200, 200, 160, 180 * 16, 180 * 16)
 
     def drawSmileExpression(self, paint):
         paint.setBrush(QColor(Qt.white))
         paint.setPen(QPen(Qt.white, 5))
-        paint.drawArc(100, 150, 100, 100, 0 * 16, 180 * 16)
-        paint.drawArc(320, 150, 100, 100, 0 * 16, 180 * 16)
-        paint.drawArc(160, 200, 200, 160, 180 * 16, 180 * 16)
+        paint.drawArc(250, 150, 100, 100, 0 * 16, 180 * 16)
+        paint.drawArc(450, 150, 100, 100, 0 * 16, 180 * 16)
+        paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
 
     def drawHeartExpression(self, paint):
         paint.setBrush(QColor(Qt.white))

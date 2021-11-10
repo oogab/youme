@@ -22,7 +22,7 @@ def weather_query(transcript):
         script = today_weather()
         return script
 
-    elif re.search(r'\b()\b', transcript, re.I):
+    elif re.search(r'\b(내일 날씨)\b', transcript, re.I):
         script = tomorrow_weather()
         return script
 
