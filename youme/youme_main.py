@@ -187,15 +187,16 @@ def listen_print_loop(responses):
                 tts(script)
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
-                expression_index = 3
                 rint = random.randrange(0, 2)
                 if rint == 0:
                     pygame.mixer.music.load("./replyMP3/gwaenchan.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
                         mic.pause()
+                        heartTalking()
                     mic.resume()
                 else:
+                    expression_index = 3
                     pygame.mixer.music.load("./replyMP3/jaeil.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
@@ -250,9 +251,13 @@ def stt():
         responses = client.streaming_recognize(streaming_config, requests)
         listen_print_loop(responses)
 
-def tts(talk):
-    global mic
-    global expression_index
+# mode config
+#
+# 0 : normalTalking
+# 1 : heartTalking
+#
+#
+def tts(talk, mode):
     # Instantiates a client
     client = texttospeech.TextToSpeechClient()
     
@@ -286,9 +291,10 @@ def tts(talk):
     pygame.mixer.music.load("output.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy() == True:
-        normalTalking() 
-    #     mic.pause()
-    # mic.resume()
+        if mode == 0: 
+            normalTalking()
+        elif mode == 1:
+            heartTalking()
 
 def normalTalking():
     global mic
@@ -296,6 +302,14 @@ def normalTalking():
     expression_index = 2
     time.sleep(0.3)
     expression_index = 1
+    time.sleep(0.3)
+
+def heartTalking():
+    global mic
+    global expression_index
+    expression_index = 4
+    time.sleep(0.3)
+    expression_index = 5
     time.sleep(0.3)
 
 class MainWindow(QWidget):
@@ -316,11 +330,17 @@ class MainWindow(QWidget):
         # 1 : Normal
         # 2 : Talk
         # 3 : Smile
+        # 4 : Heart1
+        # 5 : Heart2
+        # 6 : SmileTeeth
         self.expressionList = [
             expression.drawLoadingExpression,
             expression.drawNormalExpression,
             expression.drawTalkExpression,
-            expression.drawSmileExpression
+            expression.drawSmileExpression,
+            expression.drawHeartOneExpression,
+            expression.drawHeartTwoExpression
+            expression.drawSmileTeethExpression,
         ]
 
         expression_index = 0

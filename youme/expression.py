@@ -36,21 +36,43 @@ def drawSmileExpression(paint):
     paint.drawArc(450, 150, 100, 100, 0 * 16, 180 * 16)
     paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
 
-def drawHeartExpression(paint):
+def drawHeartOneExpression(paint):
     paint.setBrush(QColor(Qt.white))
     paint.setPen(QPen(Qt.white, 5))
-    paint.drawArc(100, 130, 50, 50, 0 * 16, 180 * 16)
-    paint.drawArc(150, 130, 50, 50, 0 * 16, 180 * 16)
-    paint.drawArc(100, 105, 100, 100, 180 * 16, 90 * 16)
-    paint.drawArc(100, 105, 100, 100, 270 * 16, 90 * 16)
-    paint.drawArc(340, 130, 50, 50, 0 * 16, 180 * 16)
-    paint.drawArc(390, 130, 50, 50, 0 * 16, 180 * 16)
-    paint.drawArc(340, 105, 100, 100, 180 * 16, 90 * 16)
-    paint.drawArc(340, 105, 100, 100, 270 * 16, 90 * 16)
-    paint.drawLine(245, 200, 100, 250)
-    paint.drawLine(245, 200, 390, 250)
-    paint.drawLine(100, 250, 390, 250)
+    paint.drawChord(250, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawChord(300, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawPie(250, 105, 100, 100, 180 * 16, 90 * 16)
+    paint.drawPie(250, 105, 100, 100, 270 * 16, 90 * 16)
+    paint.drawChord(450, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawChord(500, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawPie(450, 105, 100, 100, 180 * 16, 90 * 16)
+    paint.drawPie(450, 105, 100, 100, 270 * 16, 90 * 16)
+    paint.drawLine(400, 250, 300, 350)
+    paint.drawLine(400, 250, 500, 350)
+    paint.drawLine(300, 350, 500, 350)
 
+def drawHeartTwoExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawChord(250, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawChord(300, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawPie(250, 105, 100, 100, 180 * 16, 90 * 16)
+    paint.drawPie(250, 105, 100, 100, 270 * 16, 90 * 16)
+    paint.drawChord(450, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawChord(500, 130, 50, 50, 0 * 16, 180 * 16)
+    paint.drawPie(450, 105, 100, 100, 180 * 16, 90 * 16)
+    paint.drawPie(450, 105, 100, 100, 270 * 16, 90 * 16)
+    paint.drawLine(300, 350, 500, 350)
+
+def drawSmileTeethExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawEllipse(250, 100, 80, 120)
+    paint.drawEllipse(470, 100, 80, 120)
+    paint.drawLine(300, 280, 500, 280)
+    paint.drawLine(366, 280, 366, 355)
+    paint.drawLine(434, 280, 434, 355)
+    paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
 
 if __name__=="__main__":
     pass
