@@ -4,10 +4,9 @@
 
 <table>
   <tr>
-  <td align="center"><a href="https://lab.ssafy.com/gjskarb1492"><img alt="namgyu" src="https://user-images.githubusercontent.com/48434764/130107068-7840228e-b8e2-419f-a352-77259bc2674a.png" width="150px;"/><br /><sub><b>팀장_허남규</b></sub></a><br /></td>
+  <td align="center"><a href="https://lab.ssafy.com/oogab"><img alt="sankwook" src="https://user-images.githubusercontent.com/48434764/130107140-fbbb49a0-3004-441c-b9d0-98ee32dc17bd.png" width="150px;" /><br /><sub><b>팀장_백상욱</b></sub></a><br /></td>
     <td align="center"><a href="https://lab.ssafy.com/minjoo0112"><img alt="minjoo" src="https://user-images.githubusercontent.com/48434764/130104515-3ea67786-79e7-4e8b-824b-e553a0f3ec8b.png" width="150px;"/><br /><sub><b>김민주</b></sub></a><br /></td>
   <td align="center"><a href="https://lab.ssafy.com/kimminji0527"><img alt="minji" src="https://user-images.githubusercontent.com/48434764/130106965-62d4e73d-f3dc-4899-a331-0a1e549089f8.png" width="150px;" /><br /><sub><b>김민지</b></sub></a><br /></td>
-   <td align="center"><a href="https://lab.ssafy.com/oogab"><img alt="sankwook" src="https://user-images.githubusercontent.com/48434764/130107140-fbbb49a0-3004-441c-b9d0-98ee32dc17bd.png" width="150px;" /><br /><sub><b>백상욱</b></sub></a><br /></td>
     <td align="center"><a href="https://lab.ssafy.com/chsem145"><img alt="yuri" src="https://user-images.githubusercontent.com/48434764/130107209-358a270f-d2dc-4462-a056-5ac90d3fef20.png" width="150px;" /><br /><sub><b>백유리</b></sub></a><br /></td>
   </tr>
 </table>
@@ -25,27 +24,18 @@
 
 ## **📝Today's Meeting**
 
-### 11월 9일
+### 11월 10일
 
 - Daily Scrum
 
-  | member | content                                                                             |
-  | ------ | ----------------------------------------------------------------------------------- |
-  | 김민주 | 모델링 한 부분 전달해서 출력 중이다. 모델링한 결과물 수령 예정이고 공유하겠다.      |
-  | 김민지 | 서보모터 펌웨어 수정할 생각이다.                                                    |
-  | 백상욱 | 계속 메인프로그램 수정중이고 오늘까지 어느정도 완성 할 예정이다.                    |
-  | 백유리 | 화자인식 버그 수정 완료, 터틀봇 환경설정 진행하고 socket통신까지 진행했으면 좋겠다. |
-  | 허남규 | 안녕히계세요!                                                                       |
+  | member | content                                                                                                      |
+  | ------ | ------------------------------------------------------------------------------------------------------------ |
+  | 김민주 | 출력물 수령 완료, 커피머신 관련 출력물은 아직 수령 못함 받게 되면 공유하고 터틀봇 내부 구성 설계할 예정이다. |
+  | 김민지 | 하드웨어 파일 보고 서보모터 들어갈 내부 설계 확인해 보겠다.                                                  |
+  | 백상욱 | 기능들 많이 만들었고 가능하면 영상으로 공유를 하겠다.                                                        |
+  | 백유리 | 소켓 연결 완료 웹에서 제어가 되고 있다. 그 외에 기능들 제어를 진행해봐야겠다.                                |
 
 <br>
-
-- 회의 내용
-
-  - 목요일날 백상욱 집으로 집합하기 프로세스 합치기!
-  - 로봇 모델링 부분에서 팔 부분 구멍 뚫었으면 좋겠다!
-  - 서보 모터로 팔 관련 움직임 따로 몇가지 만들어 두었으면 합니다.
-
-<br/>
 
 ## **🌝개발 업무 분담**
 
@@ -577,6 +567,15 @@
     <br/>
 
     ### 11월 10일
+
+    - Daily Scrum
+
+      | member | content                                                                                                      |
+      | ------ | ------------------------------------------------------------------------------------------------------------ |
+      | 김민주 | 출력물 수령 완료, 커피머신 관련 출력물은 아직 수령 못함 받게 되면 공유하고 터틀봇 내부 구성 설계할 예정이다. |
+      | 김민지 | 하드웨어 파일 보고 서보모터 들어갈 내부 설계 확인해 보겠다.                                                  |
+      | 백상욱 | 기능들 많이 만들었고 가능하면 영상으로 공유를 하겠다.                                                        |
+      | 백유리 | 소켓 연결 완료 웹에서 제어가 되고 있다. 그 외에 기능들 제어를 진행해봐야겠다.                                |
 
     <br/>
     <br/>
