@@ -16,4 +16,5 @@ def upload_photo(photo_name):
             return photo_address
 
 if __name__=="__main__":
-    pass
+    photo_name = 'example'
+    upload_photo(photo_name)

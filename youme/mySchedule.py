@@ -22,6 +22,7 @@ monthlySchedule = []
 # 일정 관련 쿼리 처리 허브
 def schedule_query(transcript):
     if len(allSchedule) == 0:
+        print('run')
         get_schedule()
     
     if re.search(r'\b(오늘 일정)\b', transcript, re.I):
@@ -50,6 +51,7 @@ def get_schedule():
     current_time = current_datetime[1].split('.')[0]
 
     for schedule in tmpAllSchedules:
+        allSchedule.append(schedule)
         start_date = parser.parse(schedule['start'])
         end_date = parser.parse(schedule['end'])
 

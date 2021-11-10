@@ -3,7 +3,6 @@ import os
 import re
 import threading
 import time
-import schedule
 import random
 import pygame
 
@@ -11,7 +10,8 @@ import pygame
 import routine
 import challenge
 import weather
-import schedule
+import mySchedule
+import search 
 
 # pyqt5
 from PyQt5 import QtCore
@@ -38,6 +38,9 @@ expression_index = 0
 
 RATE = 8000
 CHUNK = int(RATE / 10)
+
+email = 'oogab@naver.com'
+password = 'test123!'
 
 cookies = ''
 user_id = ''
@@ -171,11 +174,15 @@ def listen_print_loop(responses):
                 tts(script)
             
             elif re.search(r'\b(일정)\b', transcript, re.I):
-                script = schedule.schedule_query(transcript)
+                script = mySchedule.schedule_query(transcript)
                 tts(script)
             
             elif re.search(r'\b(날씨)\b', transcript, re.I):
                 script = weather.weather_query(transcript)
+                tts(script)
+
+            elif re.search(r'\b(검색)\b', transcript, re.I):
+                script = search.search_query(transcript)
                 tts(script)
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
@@ -276,9 +283,9 @@ def tts(talk):
     # 생성된 output.mp3 파일 실행
     pygame.mixer.music.load("output.mp3")
     pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() == True:
-        mic.pause()
-    mic.resume()
+    # while pygame.mixer.music.get_busy() == True:
+    #     mic.pause()
+    # mic.resume()
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -287,15 +294,17 @@ class MainWindow(QWidget):
         self.timer = QTimer(self)
         self.timer.setInterval(300)
         self.timer.timeout.connect(self.timeout)
-
+    
+        """
         self.email = 'oogab@naver.com'
         self.password = 'test123!'
+        """
 
         self.initMainWindow()
 
     def initMainWindow(self):
         self.timer.start()
-        self.login()
+        # login()
         
         # 0 : Loading
         # 1 : Normal
@@ -319,6 +328,7 @@ class MainWindow(QWidget):
         self.setLayout(self.mainLayout)
         self.show()
 
+    """
     def login(self):
         global user_id
         global expression_index
@@ -328,9 +338,6 @@ class MainWindow(QWidget):
             headers = {'Content-Type' : 'application/json; charset=utf-8'}
             data = {'email': self.email, 'password': self.password}
             with session.post(url+'/user/login', data=json.dumps(data), headers=headers) as response:
-                # print("response text - ", str(response.text))
-                # print("response headers - ", str(response.headers))
-                # print("response cookies - ", str(response.cookies))
                 cookies = response.cookies
                 headers = session.headers
                 user_id = response.json()["id"]
@@ -338,10 +345,9 @@ class MainWindow(QWidget):
                 if response.status_code == 200:
                     print('로그인 성공!')
                     expression_index = 1
-                    # screenWidget.setCurrentIndex(screenWidget.currentIndex()+1)
                 else:
                     print('입력한 정보가 올바르지 않습니다!')
- 
+    """
 
     def paintEvent(self, event):
         paint = QPainter()
@@ -415,6 +421,26 @@ class MainWindow(QWidget):
         res = requests.post('http://112.169.87.3:8005/youme/challenge', data=json.dumps(data), headers=headers)
         tts(res.text)
 
+def login():
+    global user_id
+    global expression_index
+
+    # requests로 직접 접속도 가능하지만 요청 사항을 다루려면 세션을 만들어야 한다!
+    with requests.Session() as session:
+        headers = {'Content-Type' : 'application/json; charset=utf-8'}
+        data = {'email': email, 'password': password}
+        with session.post(url+'/user/login', data=json.dumps(data), headers=headers) as response:
+            cookies = response.cookies
+            headers = session.headers
+            user_id = response.json()["id"]
+
+            if response.status_code == 200:
+                print('로그인 성공!')
+                expression_index = 1
+            else:
+                print('입력한 정보가 올바르지 않습니다!')
+
+
 if __name__ == "__main__":
     # QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv)
@@ -448,6 +474,7 @@ if __name__ == "__main__":
 
     # 처음은 강제로 실행시켜줘야 한다.
     start_stt_t()
+    login()
     
     # 프로그램을 이벤트 루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()

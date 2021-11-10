@@ -3,7 +3,6 @@ import os
 import re
 import threading
 import time
-import schedule
 import random
 import requests
 import json
@@ -32,8 +31,12 @@ def routine_query(transcript):
         script = today_morning_routine()
         return script
 
-    elif re.search(r'\b([1-9]번 루틴 습관 알려 줘)\b', transcript, re.I):
-        routine_num = int(transcript.split()[0][0])
+    elif re.search(r'\b(루틴 ([1-9]|[일이삼사오육칠팔구])번 습관 알려 줘)\b', transcript, re.I):
+        routine_num = transcript.split()[1][0]
+        if routine_num == '이':
+            routine_num = '2'
+            
+        routine_num = int(routine_num)
         if routine_num <= 0:
             script = '응답 루틴 번호를 확인해 주세요.'
         else:
