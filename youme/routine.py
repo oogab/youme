@@ -20,15 +20,15 @@ tomorrowRoutines = []
 # 루틴 관련 쿼리 처리 허브
 def routine_query(transcript):
     if re.search(r'\b((전체|모든|내) 루틴 알려 줘)\b', transcript, re.I):
-        script = all_routine()
+        script = all_routine(transcript)
         return script
     
     elif re.search(r'\b(오늘 루틴 알려 줘)\b', transcript, re.I):
-        script = today_routine()
+        script = today_routine(transcript)
         return script
 
     elif re.search(r'\b(오늘 오전 루틴 알려 줘)\b', transcript, re.I):
-        script = today_morning_routine()
+        script = today_morning_routine(transcript)
         return script
 
     elif re.search(r'\b(루틴 ([1-9]|[일이삼사오육칠팔구])번 습관 알려 줘)\b', transcript, re.I):
@@ -40,13 +40,16 @@ def routine_query(transcript):
         if routine_num <= 0:
             script = '응답 루틴 번호를 확인해 주세요.'
         else:
-            script = check_routinized_habit(routine_num-1)
+            script = check_routinized_habit(routine_num-1, transcript)
         return script
     
     script = '응답 무슨 말인지 모르겠어요.'
     return script
 
-def all_routine():
+def all_routine(transcript):
+    global data
+
+    data['transcript'] = transcript
     res = requests.post(url+'/routine', headers=headers, data=json.dumps(data))
     if res.status_code == 400:
         return '응답 루틴이 없습니다!'
@@ -58,9 +61,11 @@ def all_routine():
     return script 
 
 # 오늘 전체 루틴 목록 확인
-def today_routine():
+def today_routine(transcript):
     global todayRoutines
+    global data
 
+    data['transcript'] = transcript
     if len(todayRoutines) == 0:
         print('first time to load today routine')
         res = requests.post(url+'/routine/today', headers=headers, data=json.dumps(data))
@@ -79,7 +84,7 @@ def today_routine():
     return script
 
 # 오늘 오전 루틴 목록 확인
-def today_morning_routine():
+def today_morning_routine(transcript):
     res = requests.post(url+'/routine/morning', headers=headers, data=json.dumps(data))
     return res.text
 
@@ -88,7 +93,7 @@ def today_morning_routine():
 # 내일 전체 루틴 목록 확인
 
 # 루틴 내 습관 확인
-def check_routinized_habit(routine_num):
+def check_routinized_habit(routine_num, transcript):
     global todayRoutines
 
     if len(todayRoutines) == 0:

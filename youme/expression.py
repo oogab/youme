@@ -74,5 +74,20 @@ def drawSmileTeethExpression(paint):
     paint.drawLine(434, 280, 434, 355)
     paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
 
+def drawDissapointedExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawEllipse(250, 100, 80, 120)
+    paint.drawEllipse(470, 100, 80, 120)
+    paint.drawLine(400, 250, 300, 350)
+    paint.drawLine(400, 250, 500, 350)
+
+def drawBlankExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawEllipse(250, 100, 80, 120)
+    paint.drawEllipse(470, 100, 80, 120)
+    paint.drawLine(300, 350, 500, 350)
+
 if __name__=="__main__":
     pass

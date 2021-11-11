@@ -168,23 +168,23 @@ def listen_print_loop(responses):
 
             if re.search(r'\b(루틴)\b', transcript, re.I):
                 script = routine.routine_query(transcript)
-                tts(script)
+                tts(script, 0)
 
             elif re.search(r'\b((챌|첼)린지)\b', transcript, re.I):
                 script = challenge.challenge_query(transcript)
-                tts(script)
+                tts(script, 0)
             
             elif re.search(r'\b(일정)\b', transcript, re.I):
                 script = mySchedule.schedule_query(transcript)
-                tts(script)
+                tts(script, 0)
             
             elif re.search(r'\b(날씨)\b', transcript, re.I):
                 script = weather.weather_query(transcript)
-                tts(script)
+                tts(script, 0)
 
             elif re.search(r'\b(검색)\b', transcript, re.I):
                 script = search.search_query(transcript)
-                tts(script)
+                tts(script, 0)
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
                 rint = random.randrange(0, 2)
@@ -209,7 +209,7 @@ def listen_print_loop(responses):
                 }
                 data = {'message': transcript}
                 res = requests.post(url+'/youme/textQuery', headers=headers, data=json.dumps(data))
-                tts(res.text)
+                tts(res.text, 0)
             call_youme = False
             expression_index = 1
 
@@ -251,7 +251,7 @@ def stt():
         responses = client.streaming_recognize(streaming_config, requests)
         listen_print_loop(responses)
 
-# mode config
+# talking mode config
 #
 # 0 : normalTalking
 # 1 : heartTalking
@@ -333,14 +333,18 @@ class MainWindow(QWidget):
         # 4 : Heart1
         # 5 : Heart2
         # 6 : SmileTeeth
+        # 7 : Dissapointed
+        # 8 : Blank
         self.expressionList = [
             expression.drawLoadingExpression,
             expression.drawNormalExpression,
             expression.drawTalkExpression,
             expression.drawSmileExpression,
             expression.drawHeartOneExpression,
-            expression.drawHeartTwoExpression
+            expression.drawHeartTwoExpression,
             expression.drawSmileTeethExpression,
+            expression.drawDissapointedExpression,
+            expression.drawBlankExpression,
         ]
 
         expression_index = 0
