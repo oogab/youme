@@ -5,6 +5,7 @@ import threading
 import time
 import random
 import pygame
+import serial
 
 # module
 import routine
@@ -48,6 +49,8 @@ user_id = ''
 url = 'http://112.169.87.3:8005'
 
 stop_stream = False
+
+ser = serial.Serial("/dev/ttyACM0", 9600)
 
 class MicrophoneStream(object):
     def __init__(self, rate, chunk):
@@ -203,8 +206,13 @@ def listen_print_loop(responses):
                         mic.pause()
                     mic.resume()
 
-            elif re.search(r'\b(불 켜줘)\b', transcript, re.I):
-                pass
+            elif re.search(r'\b(불([가-힣]| )*켜([가-힣]| )*)\b', transcript, re.I):
+                tts('알겠습니다.', 0)
+                ser.write(b'2')
+
+            elif re.search(r'\b(불([가-힣]| )*꺼([가-힣]| )*)\b', transcript, re.I):
+                tts('알겠습니다.', 0)
+                ser.write(b'3')
 
             else:
                 headers = {
@@ -338,9 +346,9 @@ class MainWindow(QWidget):
         # 6 : SmileTeeth
         # 7 : Dissapointed
         # 8 : Blank
+        # 9 : Surprised
         self.expressionList = [
             expression.drawLoadingExpression,
-            expression.drawSurpriseExpression,
             expression.drawNormalExpression,
             expression.drawTalkExpression,
             expression.drawSmileExpression,
@@ -349,6 +357,7 @@ class MainWindow(QWidget):
             expression.drawSmileTeethExpression,
             expression.drawDissapointedExpression,
             expression.drawBlankExpression,
+            expression.drawSurpriseExpression,
         ]
 
         expression_index = 0
