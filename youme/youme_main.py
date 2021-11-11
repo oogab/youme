@@ -156,7 +156,7 @@ def listen_print_loop(responses):
                 call_youme = True
                 global expression_index
                 expression_index = 2
-                pygame.mixer.music.load("./replyMP3/ne.mp3")
+                pygame.mixer.music.load("./replyMP3/youme_wake.mp3")
                 pygame.mixer.music.play()
                 while pygame.mixer.music.get_busy() == True:
                     continue
@@ -191,15 +191,14 @@ def listen_print_loop(responses):
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
                 rint = random.randrange(0, 2)
+                expression_index = 3
                 if rint == 0:
                     pygame.mixer.music.load("./replyMP3/gwaenchan.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
                         mic.pause()
-                        heartTalking()
                     mic.resume()
                 else:
-                    expression_index = 3
                     pygame.mixer.music.load("./replyMP3/jaeil.mp3")
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy() == True:
@@ -207,11 +206,11 @@ def listen_print_loop(responses):
                     mic.resume()
 
             elif re.search(r'\b(불([가-힣]| )*켜([가-힣]| )*)\b', transcript, re.I):
-                tts('알겠습니다.', 0)
+                tts('응답 알겠습니다.', 0)
                 ser.write(b'2')
 
             elif re.search(r'\b(불([가-힣]| )*꺼([가-힣]| )*)\b', transcript, re.I):
-                tts('알겠습니다.', 0)
+                tts('응답 알겠습니다.', 0)
                 ser.write(b'3')
 
             else:
