@@ -153,7 +153,7 @@ def listen_print_loop(responses):
                 call_youme = True
                 global expression_index
                 expression_index = 2
-                pygame.mixer.music.load("./replyMP3/youme_wake.mp3")
+                pygame.mixer.music.load("./replyMP3/ne.mp3")
                 pygame.mixer.music.play()
                 while pygame.mixer.music.get_busy() == True:
                     continue
@@ -202,6 +202,9 @@ def listen_print_loop(responses):
                     while pygame.mixer.music.get_busy() == True:
                         mic.pause()
                     mic.resume()
+
+            elif re.search(r'\b(불 켜줘)\b', transcript, re.I):
+                pass
 
             else:
                 headers = {
@@ -337,6 +340,7 @@ class MainWindow(QWidget):
         # 8 : Blank
         self.expressionList = [
             expression.drawLoadingExpression,
+            expression.drawSurpriseExpression,
             expression.drawNormalExpression,
             expression.drawTalkExpression,
             expression.drawSmileExpression,

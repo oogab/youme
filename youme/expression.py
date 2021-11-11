@@ -89,5 +89,12 @@ def drawBlankExpression(paint):
     paint.drawEllipse(470, 100, 80, 120)
     paint.drawLine(300, 350, 500, 350)
 
+def drawSurpriseExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawEllipse(250, 100, 80, 120)
+    paint.drawEllipse(470, 100, 80, 120)
+    paint.drawArc(300, 230, 200, 180, 0 * 16, 360 * 16)
+
 if __name__=="__main__":
     pass
