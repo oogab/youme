@@ -7,38 +7,7 @@ const { isLoggedIn } = require('./middlewares')
 
 const router = express.Router()
 
-// 월별 일정 목록 가져오기
-/**
- * @swagger
- *  /schedule:
- *    get:
- *      tags:
- *        - schedule
- *      description: 내 월별 일정 가져오기
- *
- *      responses:
- *        '200':
- *          description: Success
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *                properties:
- *                  id:
- *                   type: integer
- *                  title:
- *                   type: string
- *                  color:
- *                   type: string
- *                  start:
- *                   type: string
- *                  end:
- *                   type: string
- *                  allDay:
- *                   type: boolean
- *                  UserId:
- *                   type: integer
- */
+// 전체 일정 목록 가져오기
 router.post('/', async (req, res, next) => { // GET /routine
   try {
     const schedule = await Schedule.findAll({
@@ -52,54 +21,7 @@ router.post('/', async (req, res, next) => { // GET /routine
   }
 })
 
-
-/**
- * @swagger
- *  /schedule:
- *    post:
- *      tags:
- *        - schedule
- *      description: 새로운 일정 추가하기
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *        properties:
- *          title:
- *            type: string
- *          color:
- *            type: string
- *          start:
- *            type: string
- *          end:
- *            type: string
- *          allDay:
- *            type: integer
- *      responses:
- *        '200':
- *          description: Success
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *        properties:
- *          id:
- *            type: integer
- *          title:
- *            type: string
- *          color:
- *            type: string
- *          start:
- *            type: string
- *          end:
- *            type: string
- *          allDay:
- *            type: integer
- *          UserId:
- *            type: integer
- */
+// 일정 추가하기
 router.post('/', isLoggedIn, async (req, res, next) => { // POST /routine
   try {
     const schedule = await Schedule.create({
@@ -119,60 +41,7 @@ router.post('/', isLoggedIn, async (req, res, next) => { // POST /routine
   }
 })
 
-/**
- * @swagger
- *  /schedule/{scheduleId}:
- *    put:
- *      tags:
- *        - schedule
- *      description: 일정 수정하기
- *      parameters:
- *        - in: path
- *          name: scheduleId
- *          required: true
- *          schema:
- *            type: integer
- *            minimum: 1
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              type: object
-    *        properties:
-    *          title:
-    *            type: string
-    *          color:
-    *            type: string
-    *          start:
-    *            type: string
-    *          end:
-    *            type: string
-    *          allDay:
-    *            type: integer
- *      responses:
- *        '200':
- *          description: Success
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *        properties:
- *          id:
- *            type: integer
- *          title:
- *            type: string
- *          color:
- *            type: string
- *          start:
- *            type: string
- *          end:
- *            type: string
- *          allDay:
- *            type: integer
- *          UserId:
- *            type: integer
- */
+// 일정 수정하기
 router.put('/:scheduleId', isLoggedIn, async (req, res, next) => { // PATCH /routine/:routineId
   try {
     await Schedule.update({

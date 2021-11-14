@@ -5,6 +5,7 @@ moment.tz.setDefault("Asia/Seoul")
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const { sequelize, Routine, User, RoutinizedHabit, RoutineActiveDay, Habit, DailyAchieveHabit, DailyAchieveRoutine } = require('../models')
+const { writeHistory } = require('./middlewares')
 
 const router = express.Router()
 
@@ -25,7 +26,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.post('/today', async (req, res, next) => {
+router.post('/today', writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {
