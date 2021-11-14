@@ -31,6 +31,7 @@ const habitRouter = require('./routes/habit')
 const scheduleRouter = require('./routes/schedule')
 const weatherRouter = require('./routes/weather')
 const UsersYoumeRouter = require('./routes/usersYoume')
+const TurtlebotPointRouter = require('./routes/turtlebotPoint')
 const http = require("http").createServer(app);
 const io = require('socket.io')(http, { cors: { origin: ['http://localhost:3000', 'https://myme.today'],credentials: true },
 allowEIO3: true,
@@ -47,9 +48,27 @@ io.on("connection", function (socket) {
     socket.join(userid);               //userid로 방 만들기
   });
 
-  socket.on("turtlebot", (data) => {  //alet 이벤트로 데이터 받기 
-    io.to("turtlebot").emit("turtlebot",data);  //touserid: 클라이언트1이 보낸데이터"hwi"
-  });                                             //heejewake이벤트: hwi 에게 메시지 hwi를 보낸다
+  socket.on("turtlebot", (data) => {   
+    io.to(data.id).emit("turtlebotMode",data.data);  //turtlebot 에게 turtlebot 이라는 토픽으로 data를 보낸다.
+  });
+  
+  socket.on("goSomewhere", (data) => {   
+    io.to(data.id).emit("goSomewhere",data.data);  
+  });
+
+  socket.on("sendNowMode", (id) => {   
+    io.to(id).emit("sendNowMode");  
+  });
+
+  socket.on("getNowMode", (data) => {   
+    data = JSON.parse(data)
+    io.to(data.id).emit("getNowMode", data.data);  
+  });
+
+  socket.on("turtlebotMsg", (data) => {   
+    data = JSON.parse(data)
+    io.to(data.id).emit("getTurtlebotMsg", data.msg);  
+  });
 });                                              
 
 http.listen(port, () => {
@@ -110,6 +129,7 @@ app.use('/habit', habitRouter)
 app.use('/schedule',scheduleRouter)
 app.use('/weather',weatherRouter)
 app.use('/usersYoume',UsersYoumeRouter)
+app.use('/turtlebotPoint',TurtlebotPointRouter)
 
 app.use((req, res, next) => {
   // req.data = 'wook비번' // middleware간 data 전송

@@ -124,4 +124,36 @@ function enrollProfileAudio(blob, profileId){
 
     
   }
+
+router.put('/connect', isLoggedIn, async (req, res, next)=>{
+    try{
+        await UsersYoume.update({
+            connectedYoume: true,
+            YoumeId : req.body.id,
+        },
+        {
+            where: {UserId: req.user.id}
+        })
+        res.status(200).send('success')
+    }catch (error) {
+        console.error(error)
+        next(error)
+    }
+})
+
+router.put('/disconnect', isLoggedIn, async (req, res, next)=>{
+    try{
+        await UsersYoume.update({
+            connectedYoume: false,
+            YoumeId : null,
+        },
+        {
+            where: {UserId: req.user.id}
+        })
+        res.status(200).send('success')
+    }catch (error) {
+        console.error(error)
+        next(error)
+    }
+})
 module.exports = router

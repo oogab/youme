@@ -6,7 +6,7 @@ function App (props) {
   return(
     <Wrapper>
       <Layout>
-        <div className='menu daily-menu'><h3>YOUME 설정</h3></div>
+        <div className='menu daily-menu'><h3>유미(YOUME) 관련 설정</h3></div>
         <hr/>
         <YoumeCard/>
       </Layout>

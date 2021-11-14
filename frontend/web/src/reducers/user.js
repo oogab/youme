@@ -23,15 +23,25 @@ const initialState = {
   deleteSpeakerLoading:false,
   deleteSpeakerDone:false,
   deleteSpeakerError:null,
+  connectYoumeLoading : false,
+  connectYoumeDone : false,
+  connectYoumeError : null,
+  disconnectYoumeLoading : false,
+  disconnectYoumeDone : false,
+  disconnectYoumeError : null,
   logOutLoading: false,
   logOutDone: false,
   logOutError: null,
   signUpLoading: false,
   signUpDone: false,
   signUpError: null,
+  getTurtlebotPointLoading : false,
+  getTurtlebotPointDone : false,
+  getTurtlebotPointError : null,
   me: null,             // 현재 로그인한 유저 정보
   isSignUp: false,      // 로그인 폼 <-> 회원가입 폼
   youmeInfo : null,
+  turtlebotPoint : false,
 }
 
 export const UPDATE_MY_INFO_REQUEST = 'UPDATE_MY_INFO_REQUEST'
@@ -72,6 +82,19 @@ export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE'
 export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST'
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS'
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE'
+
+export const GET_TURTLEBOT_POINT_REQUEST = 'GET_TURTLEBOT_POINT_REQUEST'
+export const GET_TURTLEBOT_POINT_SUCCESS = 'GET_TURTLEBOT_POINT_SUCCESS'
+export const GET_TURTLEBOT_POINT_FAILURE = 'GET_TURTLEBOT_POINT_FAILURE'
+
+export const CONNECT_YOUME_REQUEST = 'CONNECT_YOUME_REQUEST'
+export const CONNECT_YOUME_SUCCESS = 'CONNECT_YOUME_SUCCESS'
+export const CONNECT_YOUME_FAILURE = 'CONNECT_YOUME_FAILURE'
+export const CLEAR_CONNECT_YOUME = 'CLEAR_CONNECT_YOUME'
+
+export const DISCONNECT_YOUME_REQUEST = 'DISCONNECT_YOUME_REQUEST'
+export const DISCONNECT_YOUME_SUCCESS = 'DISCONNECT_YOUME_SUCCESS'
+export const DISCONNECT_YOUME_FAILURE = 'DISCONNECT_YOUME_FAILURE'
 
 export const CHANGE_SIGN_UP_MODE = 'CHANGE_SIGN_UP_MODE'
 
@@ -243,6 +266,56 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case CHANGE_SIGN_UP_MODE:
       draft.isSignUp = !draft.isSignUp
       break
+    case GET_TURTLEBOT_POINT_REQUEST:
+      draft.getTurtlebotPointLoading=true
+      draft.getTurtlebotPointDone=false
+      draft.getTurtlebotPointError=null
+      break
+    case GET_TURTLEBOT_POINT_SUCCESS:
+      draft.getTurtlebotPointLoading=false
+      draft.getTurtlebotPointDone=true
+      draft.turtlebotPoint=true
+      break
+    case GET_TURTLEBOT_POINT_FAILURE:
+      draft.getTurtlebotPointLoading=false
+      draft.turtlebotPoint=false
+      draft.getTurtlebotPointError=action.error
+      break
+    case CONNECT_YOUME_REQUEST:
+      draft.connectYoumeLoading=true
+      draft.connectYoumeDone=false
+      draft.connectYoumeError=null
+      break
+    case CONNECT_YOUME_SUCCESS:
+      draft.connectYoumeLoading=false
+      draft.connectYoumeDone=true
+      draft.youmeInfo.connectedYoume = true
+      draft.youmeInfo.YoumeId = action.data
+      break
+    case CONNECT_YOUME_FAILURE:
+      draft.connectYoumeLoading=false
+      draft.connectYoumeError=action.error
+      break
+    case CLEAR_CONNECT_YOUME:
+      draft.connectYoumeLoading=false
+      draft.connectYoumeDone=false
+      draft.connectYoumeError=null
+      break
+    case DISCONNECT_YOUME_REQUEST:
+      draft.disconnectYoumeLoading=true
+      draft.disconnectYoumeDone=false
+      draft.disconnectYoumeError=null
+      break
+    case DISCONNECT_YOUME_SUCCESS:
+      draft.disconnectYoumeLoading=false
+      draft.disconnectYoumeDone=true
+      draft.youmeInfo.connectedYoume = false
+      draft.youmeInfo.YoumeId = null
+      break
+    case DISCONNECT_YOUME_FAILURE:
+      draft.disconnectYoumeLoading=false
+      draft.disconnectYoumeError=action.error
+      break  
       default:break
   }
 })

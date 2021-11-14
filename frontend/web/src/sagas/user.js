@@ -41,6 +41,15 @@ import {
   UPDATE_MY_INFO_REQUEST,
   UPDATE_MY_INFO_SUCCESS,
   UPDATE_MY_INFO_FAILURE,
+  GET_TURTLEBOT_POINT_REQUEST,
+  GET_TURTLEBOT_POINT_SUCCESS,
+  GET_TURTLEBOT_POINT_FAILURE,
+  CONNECT_YOUME_REQUEST,
+  CONNECT_YOUME_SUCCESS,
+  CONNECT_YOUME_FAILURE,
+  DISCONNECT_YOUME_REQUEST,
+  DISCONNECT_YOUME_SUCCESS,
+  DISCONNECT_YOUME_FAILURE,
   // CHANGE_NICKNAME_REQUEST,
   // CHANGE_NICKNAME_SUCCESS,
   // CHANGE_NICKNAME_FAILURE,
@@ -365,6 +374,58 @@ function* deleteSpeaker(){
     })
   }
 }
+
+function getTurtlebotPointAPI(data){
+  console.log("hello")
+  return axios.get('/turtlebotPoint/'+data)
+}
+function* getTurtlebotPoint(action){
+  try{
+    const result = yield call(getTurtlebotPointAPI, action.data)
+    yield put({
+      type:GET_TURTLEBOT_POINT_SUCCESS
+    })
+  }catch(err){
+    yield put({
+      type:GET_TURTLEBOT_POINT_FAILURE,
+      error:err
+    })
+  }
+}
+
+function connectYoumeAPI(data){
+  return axios.put('/usersYoume/connect', {id:data})
+}
+function* connectYoume(action){
+  try{
+    yield call(connectYoumeAPI, action.data)
+    yield put({
+      type:CONNECT_YOUME_SUCCESS,
+      data:action.data
+    })
+  }catch(err){
+    yield put({
+      type:CONNECT_YOUME_FAILURE,
+      error:err
+    })
+  }
+}
+function disconnectYoumeAPI(){
+  return axios.put('/usersYoume/disconnect',)
+}
+function* disconnectYoume(){
+  try{
+    yield call(disconnectYoumeAPI)
+    yield put({
+      type:DISCONNECT_YOUME_SUCCESS,
+    })
+  }catch(err){
+    yield put({
+      type:DISCONNECT_YOUME_FAILURE,
+      error:err
+    })
+  }
+}
 // function* watchRemoveFollower() {
 //   yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower)
 // }
@@ -425,6 +486,16 @@ function* watchEntrollSpeaker(){
 function* watchDeleteSpeaker(){
   yield takeLatest(DELETE_SPEAKER_REQUEST, deleteSpeaker)
 }
+function* watchGetTurtlebotPoint(){
+  yield takeLatest(GET_TURTLEBOT_POINT_REQUEST,getTurtlebotPoint)
+}
+
+function* watchConnectYoume(){
+  yield takeLatest(CONNECT_YOUME_REQUEST,connectYoume)
+}
+function* watchDisconnectYoume(){
+  yield takeLatest(DISCONNECT_YOUME_REQUEST,disconnectYoume)
+}
 export default function* userSaga() {
   yield all([
       fork(watchLogIn),
@@ -439,6 +510,9 @@ export default function* userSaga() {
       // fork(watchLoadUser),
       fork(watchLoadMyInfo),
       fork(watchUpdateMyInfo),
+      fork(watchGetTurtlebotPoint),
+      fork(watchConnectYoume),
+      fork(watchDisconnectYoume),
       // fork(watchChangeNickname),
       // fork(watchLoadFollowers),
       // fork(watchLoadFollowings),

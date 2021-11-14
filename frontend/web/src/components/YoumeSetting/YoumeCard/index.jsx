@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import Wrapper from './styles';
 import { useHistory } from 'react-router-dom';
 import Loading from '../../Etc/Loading/index'
-import {List, ListItem, ListItemText, CircularProgress} from '@material-ui/core';
+import {List, ListItem, ListItemText, Divider, ListSubheader} from '@material-ui/core';
 import {useSelector, useDispatch} from 'react-redux'
-import {CREATE_SPEAKER_ID_REQUEST, DELETE_SPEAKER_REQUEST, CLEAR_CREATE_SPEAKER_ID, CLEAR_DELETE_SPEAKER_ID} from '../../../reducers/user'
+import {CREATE_SPEAKER_ID_REQUEST, DELETE_SPEAKER_REQUEST, CLEAR_CREATE_SPEAKER_ID, CLEAR_DELETE_SPEAKER_ID, DISCONNECT_YOUME_REQUEST} from '../../../reducers/user'
 import {SET_ALERT_MODAL_FUNCTION, OPEN_ALERT_MODAL} from '../../../reducers/modal'
 function App () {
   let {youmeInfo, createSpeakerIdDone, deleteSpeakerDone, createSpeakerIdLoading, deleteSpeakerLoading} = useSelector((state)=> state.user)
@@ -47,14 +47,34 @@ function App () {
     }
   },[createSpeakerIdDone,deleteSpeakerDone])
 
+  const youme = () =>{
+    if(youmeInfo.connectedYoume){
+      dispatch({type: SET_ALERT_MODAL_FUNCTION, alertModalFunction: disconnect})
+      dispatch({type: OPEN_ALERT_MODAL, message:'연결을 해제하시겠습니까?'})
+    }else{
+      move('/ConnectYoume')
+    }
+  }
+
+  const disconnect = () =>{
+    dispatch({
+      type:DISCONNECT_YOUME_REQUEST
+    })
+  }
   return(
     <Wrapper>
         <List>
-              <ListItem onClick={()=>{move('/ConnectYoume')}}>
-                  <ListItemText primary="YOUME 연결" secondary={youmeInfo && youmeInfo.connectedYoume?youmeInfo.YoumeId:"연결되지 않음"}/>
+              <ListSubheader>유미(YOUME)</ListSubheader>
+              <ListItem onClick={youme}>
+                  <ListItemText primary="유미(YOUME) 연결" secondary={youmeInfo && youmeInfo.connectedYoume?youmeInfo.YoumeId:"연결 안함"}/>
               </ListItem>
+              <Divider/>
+              <ListSubheader>목소리 인식</ListSubheader>
             <ListItem onClick={speaker}>
                   <ListItemText primary="목소리 인식" secondary={youmeInfo && youmeInfo.connectedSpeaker?"사용 중":"사용하지 않음"}/>
+              </ListItem>
+              <ListItem disabled={!youmeInfo || !youmeInfo.connectedSpeaker} onClick={()=>{if(youmeInfo && youmeInfo.connectedSpeaker) move('/SpeakerRecognization')}}>
+              <ListItemText primary="목소리 인식 강화"/>
               </ListItem>
         </List>
         <Loading open={createSpeakerIdLoading || deleteSpeakerLoading}/>

@@ -8,7 +8,7 @@ import { useHistory } from 'react-router'
 import {OPEN_CONFIRM_MODAL} from '../../../reducers/modal'
 import {ENTROLL_SPEAKER_REQUEST} from '../../../reducers/user'
 function App () {
-  const {youmeInfo, createSpeakerIdDone,entrollSpeakerDone,deleteProfileDone} = useSelector((state) => state.user)
+  const {youmeInfo,entrollSpeakerDone} = useSelector((state) => state.user)
   const {confirmModal} = useSelector((state)=>state.modal)
   const dispatch = useDispatch()
   let [stage, setStage] = useState(0)
@@ -16,7 +16,6 @@ function App () {
   let [recordedData,setRecordedData] = useState(null)
   let history = useHistory()
   const words = ["유미야, 오늘 루틴 알려줘", "지금 날씨 너무 좋다. 산책 가기 딱 좋은 날이야!", "오늘 내가 해야할 일이 있을까?", "내일도 잘부탁해!"]
-  let [isFirst,setIsFirst] = useState(true)
   let [alreadyModal, setAlreadyModal] = useState(false)
   const startRecord = () =>{
     setOnRecord(RecordState.START)
@@ -49,14 +48,8 @@ function App () {
           message:"목소리 등록이 완료되었습니다."
         })
       }else {
-        if(isFirst){
-          setIsFirst(false)
-        }else{
-          setStage(stage+1)
-        }
+        setStage(stage+1)
       }
-      
-      
     }
     
   },[entrollSpeakerDone])

@@ -45,6 +45,7 @@
   
     UsersYoume.associate = (db) => {
       db.UsersYoume.belongsTo(db.User)
+      db.UsersYoume.hasMany(db.TurtlebotPoint)
     }
   
     return UsersYoume
