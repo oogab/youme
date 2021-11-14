@@ -30,6 +30,10 @@ def weather_query(transcript):
         script = weekend_weather()
         return script
 
+    elif re.search(r'\b(미세 먼지([가-힣]| )*(알려|어때))\b', transcript, re.I):
+        script = air_pollution()
+        return script
+
     script = '응답 무슨 말인지 모르겠어요.'
     return script
 
@@ -70,3 +74,11 @@ def weekend_weather():
     script = '응답 주말 날씨는 ' + weekendWeather[0]['description'] + ' ' + weekendWeather[1]['description'] + '입니다.'
     return script
     
+def air_pollution():
+    res = requests.post(url+'/weather/airPollution', headers=headers, data=json.dumps(data))
+    if res.status_code == 400:
+        return '응답 미세먼지 정보를 찾을 수 없습니다. 인터넷 환경을 확인하세요.'
+
+    aqi = res.json()
+    script = '응답 오늘 미세먼지는 ' + aqi['message'] + '입니다.'
+    return script

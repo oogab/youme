@@ -69,12 +69,18 @@ def get_schedule():
     # print(tomorrowSchedule)
 
 def today_schedule():
+    if len(todaySchedule) == 0:
+        script = '응답 오늘 일정이 없습니다.'
+        return script
     tmp_schedule = [s['title'] for s in todaySchedule]
     # print(tmp_schedule)
     script = '응답 오늘 일정은 ' + str(tmp_schedule) + '입니다.'
     return script
 
 def tomorrow_schedule():
+    if len(tomorrowSchedule) == 0:
+        script = '응답 내일 일정이 없습니다.'
+        return script
     tmp_schedule = [s['title'] for s in tomorrowSchedule]
     # print(tmp_schedule)
     script = '응답 내일 일정은 ' + str(tmp_schedule) + '입니다.'

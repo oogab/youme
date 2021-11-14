@@ -46,6 +46,8 @@ password = 'test123!'
 
 cookies = ''
 user_id = ''
+
+# url = 'http://k5a203.p.ssafy.io:8005'
 url = 'http://112.169.87.3:8005'
 
 stop_stream = False
@@ -181,7 +183,7 @@ def listen_print_loop(responses):
                 script = mySchedule.schedule_query(transcript)
                 tts(script, 0)
             
-            elif re.search(r'\b(날씨)\b', transcript, re.I):
+            elif re.search(r'\b(날씨|미세 먼지)\b', transcript, re.I):
                 script = weather.weather_query(transcript)
                 tts(script, 0)
 
@@ -321,6 +323,8 @@ def heartTalking():
     time.sleep(0.3)
     expression_index = 5
     time.sleep(0.3)
+
+
 
 class MainWindow(QWidget):
     def __init__(self):
