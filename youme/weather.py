@@ -30,7 +30,7 @@ def weather_query(transcript):
         script = weekend_weather()
         return script
 
-    elif re.search(r'\b(미세 먼지([가-힣]| )*(알려|어때))\b', transcript, re.I):
+    elif re.search(r'\b(미세( |)먼지([가-힣]| )*(알려|어때))\b', transcript, re.I):
         script = air_pollution()
         return script
 

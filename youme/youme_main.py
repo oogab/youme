@@ -183,7 +183,7 @@ def listen_print_loop(responses):
                 script = mySchedule.schedule_query(transcript)
                 tts(script, 0)
             
-            elif re.search(r'\b(날씨|미세 먼지)\b', transcript, re.I):
+            elif re.search(r'\b(날씨|미세 먼지|미세먼지)\b', transcript, re.I):
                 script = weather.weather_query(transcript)
                 tts(script, 0)
 
