@@ -33,9 +33,21 @@ def search_news(transcript):
 
     result = res.json()
     news_title = [news['title'] for news in result['items']]
-    print(news_title)
-
-    return '응답 검색 결과 ' + str(news_title) + ' 입니다.'
+    
+    tmp_nts = ''
+    for i, nt in enumerate(news_title):
+        tmp_nts += str(i+1)+'번, '
+        nt = nt.replace('<b>', '')
+        nt = nt.replace('</b>', '')
+        nt = nt.replace('\\xa0', '')
+        nt = nt.replace('~', '')
+        nt = nt.replace('&quot;', '')
+        
+        tmp_nts += nt
+        tmp_nts += ',  '
+    
+    print(tmp_nts)
+    return '응답 검색 결과 ' + tmp_nts + ' 입니다.'
 
 def search_wiki(transcript):
     search_thing = transcript.split()[0]
@@ -46,6 +58,18 @@ def search_wiki(transcript):
 
     result = res.json()
     wiki_title = [wiki['description'] for wiki in result['items']]
-    print(wiki_title)
+    
+    tmp_wts = ''
+    for i, wt in enumerate(wiki_title):
+        tmp_wts += str(i+1)+'번, '
+        wt = wt.replace('<b>', '')
+        wt = wt.replace('</b>', '')
+        wt = wt.replace('\\xa0', '')
+        wt = wt.replace('~', '')
+        wt = wt.replace('&quot;', '')
+        
+        tmp_wts += wt
+        tmp_wts += ',  '
 
-    return '응답 검색 결과 ' + str(wiki_title) + ' 입니다.'
+    print(tmp_wts)
+    return '응답 검색 결과 ' + tmp_wts + ' 입니다.'

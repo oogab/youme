@@ -192,7 +192,7 @@ def listen_print_loop(responses):
 
             elif re.search(r'\b(검색)\b', transcript, re.I):
                 script = search.search_query(transcript)
-                tts(script, 0)
+                tts(script, 2)
 
             elif re.search(r'\b(소켓)\b', transcript, re.I):
                 global sio
@@ -321,6 +321,8 @@ def tts(talk, mode):
             normalTalking()
         elif mode == 1:
             heartTalking()
+        elif mode == 2:
+            normalTalking()
     mic.resume()
 
 def normalTalking():
