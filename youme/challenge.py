@@ -11,9 +11,11 @@ import pygame
 import take_photo
 import upload
 
-user_id = 3
+from youme_main import user_id
+
+# user_id = 3
 headers = {'Content-Type': 'application/json; charset=utf-8'}
-data = {'userId': user_id}
+# data = {'userId': user_id}
 url = 'http://112.169.87.3:8005'
 
 pygame.mixer.init()
@@ -23,17 +25,18 @@ todayChallenges = []
 tomorrowChallenges = []
 
 # 챌린지 관련 쿼리 처리 허브
-def challenge_query(transcript):
+def challenge_query(transcript, user_id):
+    data = {'userId': user_id}
     if re.search(r'\b((전체|모든|내) 챌린지)\b', transcript, re.I):
-        script = all_challenge()
+        script = all_challenge(data)
         return script
 
     elif re.search(r'\b(오늘 챌린지)\b', transcript, re.I):
-        script = today_challenge()
+        script = today_challenge(data)
         return script
 
     elif re.search(r'\b(오늘 오전 챌린지)\b', transcript, re.I):
-        script = today_morning_challenge()
+        script = today_morning_challenge(data)
         return script
 
     elif re.search(r'\b((챌|첼)린지 [0-9]번 인증)\b', transcript, re.I):
@@ -41,14 +44,14 @@ def challenge_query(transcript):
         if challenge_num <= 0:
             script = '응답 챌린지 번호를 확인해 주세요.'
         else:
-            script = certify_challenge(challenge_num-1)
+            script = certify_challenge(challenge_num-1, data)
         return script
 
     script = '응답 무슨 말인지 모르겠어요.'
     return script
 
 # 전체 챌린지 목록 확인
-def all_challenge():
+def all_challenge(data):
     res = requests.post(url+'/challenge', headers=headers, data=json.dumps(data))
     if res.status_code == 400:
         return '응답 챌린지가 없습니다!'
@@ -65,7 +68,7 @@ def all_challenge():
     return script
 
 # 오늘 전체 챌린지 목록 확인
-def today_challenge():
+def today_challenge(data):
     global todayChallenges
 
     if len(todayChallenges) == 0:
@@ -89,7 +92,7 @@ def today_challenge():
     script = '응답 오늘 챌린지는,' + tmp_challenges + '입니다.'
     return script
 
-def certify_challenge(challenge_num):
+def certify_challenge(challenge_num, data):
     global todayChallenges
 
     if len(todayChallenges) == 0:

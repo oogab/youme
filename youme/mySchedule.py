@@ -9,9 +9,9 @@ import json
 import pygame
 from dateutil import parser
 
-user_id = 3
+# user_id = 3
 headers = {'Content-Type': 'application/json; charset=utf-8'}
-data = {'userId': user_id}
+# data = {'userId': user_id}
 url = 'http://112.169.87.3:8005'
 
 allSchedule = []
@@ -20,10 +20,11 @@ tomorrowSchedule = []
 monthlySchedule = []
 
 # 일정 관련 쿼리 처리 허브
-def schedule_query(transcript):
+def schedule_query(transcript, user_id):
+    data = {'userId': user_id}
+
     if len(allSchedule) == 0:
-        print('run')
-        get_schedule()
+        get_schedule(data)
     
     if re.search(r'\b(오늘 일정)\b', transcript, re.I):
         script = today_schedule()
@@ -37,7 +38,7 @@ def schedule_query(transcript):
     return script
 
 
-def get_schedule():
+def get_schedule(data):
     res = requests.post(url+'/schedule', headers=headers, data=json.dumps(data))
     if res.status_code == 400:
         return '응답 일정 정보가 없습니다!'

@@ -125,6 +125,7 @@ class MicrophoneStream(object):
 
 def listen_print_loop(responses):
     global mic
+    global user_id
     num_chars_printed = 0
     call_youme = False
     pygame.mixer.init()
@@ -174,15 +175,15 @@ def listen_print_loop(responses):
                 break
 
             if re.search(r'\b(루틴)\b', transcript, re.I):
-                script = routine.routine_query(transcript)
+                script = routine.routine_query(transcript, user_id)
                 tts(script, 0)
 
             elif re.search(r'\b((챌|첼)린지)\b', transcript, re.I):
-                script = challenge.challenge_query(transcript)
+                script = challenge.challenge_query(transcript, user_id)
                 tts(script, 0)
             
             elif re.search(r'\b(일정)\b', transcript, re.I):
-                script = mySchedule.schedule_query(transcript)
+                script = mySchedule.schedule_query(transcript, user_id)
                 tts(script, 0)
             
             elif re.search(r'\b(날씨|미세 먼지|미세먼지)\b', transcript, re.I):
