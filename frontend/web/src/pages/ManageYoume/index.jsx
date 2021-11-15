@@ -3,12 +3,25 @@ import Layout from '../../layout';
 import Wrapper from './styles';
 import socketIOClient from "socket.io-client";
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, Button, CardMedia, CardHeader, CardContent, Divider, CardActions } from '@material-ui/core';
+import { Card, Button, CardMedia, CardContent, Divider, CardActions, Table, TableHead, TableBody, TableCell, TableContainer, Paper, TableRow ,LinearProgress, Box} from '@material-ui/core';
 import {Stop, Policy, Explore, FitnessCenter, LocalCafe, KingBed, CropPortrait, DesktopMac} from '@material-ui/icons'
 import { OPEN_CONFIRM_MODAL } from '../../reducers/modal';
 import { useHistory } from 'react-router';
 import { backUrl } from '../../config/config';
 const socket = socketIOClient(backUrl)
+
+function LinearProgressWithLabel(props) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+          {props.value}%
+      </Box>
+    </Box>
+  );
+}
 function App () {
   const dispatch = useDispatch()
   const history = useHistory()
@@ -16,10 +29,12 @@ function App () {
   const mode = ["정지", "순찰 모드", "자유 모드", "운동", "이동 중"]
 
   const [nowMode,setNowMode] = useState(0)
+  const [battery, setBattery] = useState(0)
   useEffect(()=>{
     if(youmeInfo && youmeInfo.connectedYoume){
       socket.emit("roomjoin", youmeInfo.YoumeId);
       socket.emit("sendNowMode", youmeInfo.YoumeId);
+      socket.emit("sendBattery", youmeInfo.YoumeId);
     }
     socket.on("getNowMode",function(data){
       setNowMode(data)
@@ -27,6 +42,10 @@ function App () {
 
     socket.on("getTurtlebotMsg", function(data){
       dispatch({type:OPEN_CONFIRM_MODAL, message:data})
+    })
+
+    socket.on("battery", function(data){
+      setBattery(data.toFixed(1))
     })
   })
   const send =(msg)=>{
@@ -46,7 +65,7 @@ function App () {
           youmeInfo && youmeInfo.connectedYoume?
           <Card>
             <CardContent>
-              <h2>나의 유미</h2>
+              <h3 style={{fontSize: "1.34em"}}>나의 유미</h3>
               <p>{youmeInfo?youmeInfo.YoumeId:""}</p>
             </CardContent>
             <CardMedia
@@ -56,6 +75,28 @@ function App () {
               alt="Paella dish"
             />
             <CardContent>
+              <TableContainer component={Paper}>
+                <Table aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>속성</TableCell>
+                      <TableCell>정보</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                        <TableCell>배터리</TableCell>
+                        <TableCell><LinearProgressWithLabel value={battery}/></TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>상태</TableCell>
+                        <TableCell>{mode[nowMode]}</TableCell>
+                      </TableRow>
+                  </TableBody>
+                  </Table>
+                  </TableContainer>
+            </CardContent>
+            <CardContent>
               <h3>모드 변경</h3>
               <Divider/>
               <div className='button-div'>
@@ -64,6 +105,8 @@ function App () {
               <Button className={nowMode==2?"selected":""} variant={nowMode==2?"contained":"outlined"} onClick={()=>{send(2)}} startIcon={<Explore/>}>자유</Button>
               <Button className={nowMode==3?"selected":""} variant={nowMode==3?"contained":"outlined"} onClick={()=>{send(3)}} startIcon={<FitnessCenter/>}>운동</Button>
               </div>
+            </CardContent>
+            <CardContent>
               <h3>유미 호출</h3>
               <Divider/>
               <div className='button-div'>

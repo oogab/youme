@@ -38,6 +38,11 @@
         type: DataTypes.STRING(50),
         allowNull: true,
       },
+      familiarity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue : 0,
+      }
     }, {
       charset: 'utf8',
       collate: 'utf8_general_ci'

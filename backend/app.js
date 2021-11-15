@@ -153,4 +153,12 @@ io.on("connection", function (socket) {
     data = JSON.parse(data)
     io.to(data.id).emit("getTurtlebotMsg", data.msg);  
   });
+
+  socket.on("sendBattery", (id) =>{
+    io.to(id).emit("sendBattery")
+  })
+  socket.on("batteryState", (data) =>{
+    data = JSON.parse(data)
+    io.to(data.id).emit("battery",data.battery)
+  })
 });

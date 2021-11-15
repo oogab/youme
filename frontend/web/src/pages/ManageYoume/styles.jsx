@@ -34,5 +34,28 @@ const Wrapper = styled.div`
         margin-left:0px;
         margin-right:10px;
     }
+
+    table *{
+        font-family:'SCDream4';
+    }
+
+    .MuiTableCell-head{
+        font-weight:600;
+    }
+
+    .MuiLinearProgress-root{
+        height:10px;
+    }
+
+    .MuiLinearProgress-colorPrimary{
+        background-color: #f0f0f0;
+    }
+    .MuiLinearProgress-barColorPrimary{
+        background-color: #89DDBF;
+    }
+
+    p{
+        color:#b0b0b0;
+    }
 `;
 export default Wrapper;
