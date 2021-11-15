@@ -7,8 +7,8 @@ import { Card, Button, CardMedia, CardContent, Divider, CardActions, Table, Tabl
 import {Stop, Policy, Explore, FitnessCenter, LocalCafe, KingBed, CropPortrait, DesktopMac} from '@material-ui/icons'
 import { OPEN_CONFIRM_MODAL } from '../../reducers/modal';
 import { useHistory } from 'react-router';
-import { backUrl } from '../../config/config';
-const socket = socketIOClient(backUrl)
+import { socketUrl } from '../../config/config';
+const socket = socketIOClient(socketUrl)
 
 function LinearProgressWithLabel(props) {
   return (
