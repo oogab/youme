@@ -24,9 +24,9 @@ def drawNormalExpression(paint):
 
 def drawTalkExpression(paint):
     paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
     paint.drawEllipse(250, 100, 80, 120)
     paint.drawEllipse(470, 100, 80, 120)
-    paint.setPen(QPen(Qt.white, 5))
     paint.drawChord(300, 200, 200, 160, 180 * 16, 180 * 16)
 
 def drawSmileExpression(paint):
@@ -95,6 +95,81 @@ def drawSurpriseExpression(paint):
     paint.drawEllipse(250, 100, 80, 120)
     paint.drawEllipse(470, 100, 80, 120)
     paint.drawArc(300, 230, 200, 180, 0 * 16, 360 * 16)
+
+def drawScaredExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawArc(250, 100, 80, 120, 0 * 16, 360 * 16)
+    paint.drawArc(470, 100, 80, 120, 0 * 16, 360 * 16)
+    paint.drawArc(360, 250, 80, 120, 0 * 16, 360 * 16)
+    paint.drawArc(230, 250, 80, 120, 270 * 16, 180 * 16)
+    paint.drawArc(490, 250, 80, 120, 90 * 16, 180 * 16)
+
+def drawSadExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawLine(250, 100, 300, 150)
+    paint.drawLine(300, 150, 350, 100)
+    paint.drawLine(450, 100, 500, 150)
+    paint.drawLine(500, 150, 550, 100)
+    paint.drawEllipse(475, 150, 50, 50)
+    paint.drawEllipse(475, 225, 50, 50)
+    paint.drawEllipse(475, 300, 50, 50)
+    paint.drawEllipse(475, 375, 50, 50)
+
+def drawExitedTeethExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawLine(300, 100, 350, 150)
+    paint.drawLine(350, 150, 300, 200)
+    paint.drawLine(500, 100, 450, 150)
+    paint.drawLine(450, 150, 500, 200)
+    paint.drawLine(300, 280, 500, 280)
+    paint.drawLine(366, 280, 366, 355)
+    paint.drawLine(434, 280, 434, 355)
+    paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
+
+def drawExitedExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawLine(300, 100, 350, 150)
+    paint.drawLine(350, 150, 300, 200)
+    paint.drawLine(500, 100, 450, 150)
+    paint.drawLine(450, 150, 500, 200)
+    paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
+
+def drawOkExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawEllipse(250, 100, 80, 120)
+    paint.drawLine(500, 100, 450, 150)
+    paint.drawLine(450, 150, 500, 200)
+    paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
+
+def drawPigExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawEllipse(250, 100, 80, 120)
+    paint.drawEllipse(470, 100, 80, 120)
+    paint.drawArc(250, 250, 300, 150, 0 * 16, 360 * 16)
+    paint.drawEllipse(330, 275, 30, 50)
+    paint.drawEllipse(440, 275, 30, 50)
+
+def drawAngry1Expression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5)) 
+    paint.drawLine(300, 130, 350, 180)
+    paint.drawLine(500, 130, 450, 180)
+    paint.drawArc(270, 250, 260, 200, 0 * 16, 180 * 16)
+    paint.drawLine(270, 350, 530, 350)
+
+def drawAngry2Expression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5)) 
+    paint.drawLine(300, 130, 350, 180)
+    paint.drawLine(500, 130, 450, 180)
+    paint.drawArc(270, 250, 260, 200, 0 * 16, 180 * 16)
+
 
 if __name__=="__main__":
     pass

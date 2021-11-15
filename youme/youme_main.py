@@ -366,6 +366,14 @@ class MainWindow(QWidget):
         # 7 : Dissapointed
         # 8 : Blank
         # 9 : Surprised
+        # 10: Scared
+        # 11: Sad
+        # 12: ExitedTeeth
+        # 13: Exited
+        # 14: Ok
+        # 15: Pig
+        # 16: Angry1
+        # 17: Angry2
         self.expressionList = [
             expression.drawLoadingExpression,
             expression.drawNormalExpression,
@@ -377,6 +385,14 @@ class MainWindow(QWidget):
             expression.drawDissapointedExpression,
             expression.drawBlankExpression,
             expression.drawSurpriseExpression,
+            expression.drawScaredExpression,
+            expression.drawSadExpression,
+            expression.drawExitedTeethExpression,
+            expression.drawExitedExpression,
+            expression.drawOkExpression,
+            expression.drawPigExpression,
+            expression.drawAngry1Expression,
+            expression.drawAngry2Expression,
         ]
 
         expression_index = 0
