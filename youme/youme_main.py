@@ -191,6 +191,11 @@ def listen_print_loop(responses):
                 script = search.search_query(transcript)
                 tts(script, 0)
 
+            elif re.search(r'\b(소켓)\b', transcript, re.I):
+                global sio
+                sio.emit('message', '소켓 메세지 입니다.')
+                tts('응답 알겠습니다.', 0)
+
             elif re.search(r'\b(고마워)\b', transcript, re.I):
                 rint = random.randrange(0, 2)
                 expression_index = 3
@@ -325,6 +330,7 @@ def heartTalking():
     time.sleep(0.3)
 
 
+sio = socketio.Client()
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -375,51 +381,6 @@ class MainWindow(QWidget):
         # index만 바꿔가며 실행하면 된다.
         self.expressionList[expression_index](paint)
         paint.end()
-
-    """
-    def drawLoadingExpression(self, paint):
-        paint.setBrush(QColor(Qt.white))
-        paint.setPen(QPen(Qt.white, 5))
-        paint.drawArc(100, 100, 100, 100, 180 * 16, 180 * 16)
-        paint.drawArc(340, 100, 100, 100, 180 * 16, 180 * 16)
-        paint.drawArc(160, 200, 200, 160, 180 * 16, 180 * 16)
-
-    def drawNormalExpression(self, paint):
-        paint.setBrush(QColor(Qt.white))
-        paint.drawEllipse(250, 100, 80, 120)
-        paint.drawEllipse(470, 100, 80, 120)
-        paint.setPen(QPen(Qt.white, 5))
-        paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
-
-    def drawTalkExpression(self, paint):
-        paint.setBrush(QColor(Qt.white))
-        paint.drawEllipse(250, 100, 80, 120)
-        paint.drawEllipse(470, 100, 80, 120)
-        paint.setPen(QPen(Qt.white, 5))
-        paint.drawChord(300, 200, 200, 160, 180 * 16, 180 * 16)
-
-    def drawSmileExpression(self, paint):
-        paint.setBrush(QColor(Qt.white))
-        paint.setPen(QPen(Qt.white, 5))
-        paint.drawArc(250, 150, 100, 100, 0 * 16, 180 * 16)
-        paint.drawArc(450, 150, 100, 100, 0 * 16, 180 * 16)
-        paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
-
-    def drawHeartExpression(self, paint):
-        paint.setBrush(QColor(Qt.white))
-        paint.setPen(QPen(Qt.white, 5))
-        paint.drawArc(100, 130, 50, 50, 0 * 16, 180 * 16)
-        paint.drawArc(150, 130, 50, 50, 0 * 16, 180 * 16)
-        paint.drawArc(100, 105, 100, 100, 180 * 16, 90 * 16) 
-        paint.drawArc(100, 105, 100, 100, 270 * 16, 90 * 16)
-        paint.drawArc(340, 130, 50, 50, 0 * 16, 180 * 16)
-        paint.drawArc(390, 130, 50, 50, 0 * 16, 180 * 16)
-        paint.drawArc(340, 105, 100, 100, 180 * 16, 90 * 16) 
-        paint.drawArc(340, 105, 100, 100, 270 * 16, 90 * 16)
-        paint.drawLine(245, 200, 100, 250)
-        paint.drawLine(245, 200, 390, 250)
-        paint.drawLine(100, 250, 390, 250)
-    """    
 
     def timeout(self):
         # global expression_index
@@ -487,6 +448,20 @@ if __name__ == "__main__":
     # 처음은 강제로 실행시켜줘야 한다.
     start_stt_t()
     login()
+    sio.connect(url)
+
+    @sio.event
+    def connect():
+        print("connected!")
+
+    @sio.event
+    def connect_error(data):
+        print("connection failed!")
+
+    @sio.event
+    def disconnect():
+        print("disconnected!")
+
     
     # 프로그램을 이벤트 루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
