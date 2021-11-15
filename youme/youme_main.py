@@ -219,7 +219,7 @@ def listen_print_loop(responses):
                 headers = {
                     'Content-Type': 'application/json; charset=utf-8',
                 }
-                data = {'message': transcript}
+                data = {'message': transcript, 'userId': user_id}
                 res = requests.post(url+'/youme/textQuery', headers=headers, data=json.dumps(data))
                 tts(res.text, 0)
             call_youme = False

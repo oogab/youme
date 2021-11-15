@@ -75,7 +75,7 @@ def today_challenge():
             if challenge['ChallengeCertificationDays'][datetime.datetime.today().weekday()]['certification_available'] == True:
                 todayChallenges.append(challenge)
 
-    print(todayChallenges)
+    # print(todayChallenges)
     todayChallengeNames = [todayChallenge['name'] for todayChallenge in todayChallenges]
     
 
