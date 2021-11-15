@@ -15,3 +15,15 @@ exports.isNotLoggedIn = (req, res, next) => {
     res.send('로그인이 안 필요합니다.')
   }
 }
+
+exports.writeHistory = (req, res, next) => {
+  try {
+    if (req.body.transcript)
+      console.log(req.body.transcript.trim())
+    console.log(req.body)
+    next()
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
