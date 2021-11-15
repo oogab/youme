@@ -56,8 +56,12 @@ def all_challenge():
     challenges = res.json()
     allChallenges = [challenge['name'] for challenge in challenges]
 
-    
-    script = '응답 전체 챌린지는' + str(allChallenges) + '입니다.'
+    tmp_challenges = ''
+    for c in allchallenges:
+        tmp_challenges += c
+        tmp_challenges += ', '
+
+    script = '응답 전체 챌린지는,' + tmp_challenges + '입니다.'
     return script
 
 # 오늘 전체 챌린지 목록 확인
@@ -75,11 +79,14 @@ def today_challenge():
             if challenge['ChallengeCertificationDays'][datetime.datetime.today().weekday()]['certification_available'] == True:
                 todayChallenges.append(challenge)
 
-    # print(todayChallenges)
     todayChallengeNames = [todayChallenge['name'] for todayChallenge in todayChallenges]
-    
+    tmp_challenges = ''
+    for i, c in enumerate(todayChallengeNames):
+        tmp_challenges += str(i+1)+'번 '
+        tmp_challenges += c
+        tmp_challenges += ', '
 
-    script = '응답 오늘 챌린지는' + str(todayChallengeNames) + '입니다.'
+    script = '응답 오늘 챌린지는,' + tmp_challenges + '입니다.'
     return script
 
 def certify_challenge(challenge_num):

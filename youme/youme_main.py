@@ -31,12 +31,14 @@ import pyaudio
 import queue
 import asyncio
 import socketio
+# from socketIO_client import SocketIO, BaseNamespace
 import requests
 import json
 
 from mpyg321.mpyg321 import MPyg321Player
 
 expression_index = 0
+sio = socketio.Client()
 
 RATE = 8000
 CHUNK = int(RATE / 10)
@@ -193,7 +195,7 @@ def listen_print_loop(responses):
 
             elif re.search(r'\b(소켓)\b', transcript, re.I):
                 global sio
-                sio.emit('message', '소켓 메세지 입니다.')
+                sio.emit('message', '소켓 메세지 입니다.', namespace='/'+str(user_id))
                 tts('응답 알겠습니다.', 0)
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
@@ -268,6 +270,10 @@ def stt():
         responses = client.streaming_recognize(streaming_config, requests)
         listen_print_loop(responses)
 
+@sio.on('connect', namespace='/'+str(user_id))
+def connect():
+    print('connected!')
+
 # talking mode config
 #
 # 0 : normalTalking
@@ -275,6 +281,7 @@ def stt():
 #
 #
 def tts(talk, mode):
+    global mic
     # Instantiates a client
     client = texttospeech.TextToSpeechClient()
     
@@ -308,10 +315,12 @@ def tts(talk, mode):
     pygame.mixer.music.load("output.mp3")
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy() == True:
-        if mode == 0: 
+        if mode == 0:
+            mic.pause()
             normalTalking()
         elif mode == 1:
             heartTalking()
+    mic.resume()
 
 def normalTalking():
     global mic
@@ -329,8 +338,6 @@ def heartTalking():
     expression_index = 5
     time.sleep(0.3)
 
-
-sio = socketio.Client()
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -410,7 +417,9 @@ def login():
             user_id = response.json()["id"]
 
             if response.status_code == 200:
+                global sio
                 print('로그인 성공!')
+                sio.connect(url, namespaces=['/'+str(user_id)]) 
                 expression_index = 1
             else:
                 print('입력한 정보가 올바르지 않습니다!')
@@ -448,21 +457,7 @@ if __name__ == "__main__":
     # 처음은 강제로 실행시켜줘야 한다.
     start_stt_t()
     login()
-    sio.connect(url)
 
-    @sio.event
-    def connect():
-        print("connected!")
-
-    @sio.event
-    def connect_error(data):
-        print("connection failed!")
-
-    @sio.event
-    def disconnect():
-        print("disconnected!")
-
-    
     # 프로그램을 이벤트 루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
     stt_t.join()
