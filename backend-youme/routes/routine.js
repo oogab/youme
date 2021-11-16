@@ -9,7 +9,7 @@ const { writeHistory } = require('./middlewares')
 
 const router = express.Router()
 
-router.post('/', async (req, res, next) => {
+router.post('/',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {
@@ -65,7 +65,7 @@ router.post('/today', writeHistory, async (req, res, next) => {
   }
 })
 
-router.post('/morning', async (req, res, next) => {
+router.post('/morning',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {

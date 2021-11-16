@@ -15,9 +15,9 @@ const sessionClient = new dialogflow.SessionsClient()
 const sessionPath = sessionClient.sessionPath(projectId, sessionId)
 
 const router = express.Router()
+const { writeHistory } = require('./middlewares')
 
-
-router.post('/textQuery', async (req, res) => {
+router.post('/textQuery',writeHistory, async (req, res) => {
   const userId = req.body.userId
 
   message = req.body.message.trim()

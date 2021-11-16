@@ -7,6 +7,7 @@ let moment = require('moment')
 require('moment-timezone')
 moment.tz.setDefault("Asia/Seoul")
 const Sequelize = require('sequelize')
+const { writeHistory } = require('./middlewares')
 const { Challenge, ChallengeCertificationDay, DailyCertifyChallenge, ChallengeParticipation } = require('../models')
 
 const router = express.Router()
@@ -31,7 +32,7 @@ const upload = multer({
   limits: { fileSize: 20*1024*1024 } // 20MB
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {
@@ -48,7 +49,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.post('/today', async (req, res, next) => {
+router.post('/today',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   const d = new Date()
@@ -79,7 +80,7 @@ router.post('/today', async (req, res, next) => {
   }
 })
 
-router.post('/morning', async (req, res, next) => {
+router.post('/morning',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {
@@ -93,7 +94,7 @@ router.post('/morning', async (req, res, next) => {
   }
 })
 
-router.post('/image', upload.single('image'), async (req, res, next) => {
+router.post('/image',writeHistory, upload.single('image'), async (req, res, next) => {
   // console.log(req.file)
   res.status(200).json(req.file.location)
 })

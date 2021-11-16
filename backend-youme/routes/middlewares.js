@@ -19,13 +19,14 @@ exports.isNotLoggedIn = (req, res, next) => {
   }
 }
 
-exports.writeHistory = (req, res, next) => {
+exports.writeHistory = async (req, res, next) => {
   try {
+    console.log(req.body)
     const result = await UsersYoume.findOne({
         attributes:['familiarity']
     },
     {
-        where: {UserId: req.body.user_id}
+        where: {UserId: req.body.userId}
     })
     
     const familiarity = result.familiarity + 1
@@ -34,7 +35,7 @@ exports.writeHistory = (req, res, next) => {
         familiarity: familiarity
     },
     {
-        where: {UserId: req.body.user_id}
+        where: {UserId: req.body.userId}
     })
     next()
   } catch (error) {

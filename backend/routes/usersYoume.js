@@ -160,12 +160,9 @@ router.put('/disconnect', isLoggedIn, async (req, res, next)=>{
 router.get('/familiarity', isLoggedIn, async (req, res, next)=>{
     try{
         const result = await UsersYoume.findOne({
-            attributes:['familiarity']
-        },
-        {
+            attributes:['familiarity'],
             where: {UserId: req.user.id}
         })
-        
         let familiarity = result.familiarity
         let level = 1
         if(familiarity>=5){

@@ -3,7 +3,7 @@ const axios = require('axios')
 const { weatherDescription } = require('../config/weather_description')
 const { aqi_description } = require('../config/air_pollution')
 const { User } = require('../models/')
-
+const { writeHistory } = require('./middlewares')
 const router = express.Router()
 
 const weekDay = {
@@ -17,7 +17,7 @@ const weekDay = {
 }
 
 // 오늘 현재 날씨 조회
-router.post('/today', async (req, res, next) => {
+router.post('/today',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {
@@ -59,7 +59,7 @@ router.post('/today', async (req, res, next) => {
 })
 
 // 내일 날씨 조회
-router.post('/tomorrow', async (req, res, next) => {
+router.post('/tomorrow', writeHistory,async (req, res, next) => {
   const userId = req.body.userId
 
   try {
@@ -106,7 +106,7 @@ router.post('/tomorrow', async (req, res, next) => {
 })
 
 // 주말 토, 일 날씨 조회
-router.post('/weekend', async (req, res, next) => {
+router.post('/weekend',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {
@@ -161,7 +161,7 @@ router.post('/weekend', async (req, res, next) => {
 })
 
 // 오늘 미세먼지 조회
-router.post('/airPollution', async (req, res, next) => {
+router.post('/airPollution',writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
   try {

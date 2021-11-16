@@ -8,7 +8,7 @@ import {Stop, Policy, Explore, FitnessCenter, LocalCafe, KingBed, CropPortrait, 
 import { OPEN_CONFIRM_MODAL } from '../../reducers/modal';
 import { useHistory } from 'react-router';
 import { socketUrl } from '../../config/config';
-const socket = socketIOClient(socketUrl+'/a203a')
+const socket = socketIOClient('http://112.169.87.3:8005/a203a')
 
 function LinearProgressWithLabel(props) {
   return (
@@ -72,7 +72,7 @@ function App () {
             <CardMedia
               component="img"
               height="300"
-              image="https://img.khan.co.kr/news/2021/07/21/l_2021072101002799900235801.jpg"
+              image="images/youme.jpg"
               alt="Paella dish"
             />
             <CardContent>
@@ -85,9 +85,9 @@ function App () {
                     <h3>Level {familiarityLevel}</h3>
                   </Grid>
                   <Grid className="familiarty familiarty-description" item xs={6} style={{textAlign:"center", alignSelf:"center"}}>
-                    <h4 style={{fontSize:"14.4px"}}>아직은 조금 서먹한 사이에요.</h4>
+                    <h4 style={{fontSize:"14.4px"}}>{levelMsg[familiarityLevel]}</h4>
                     <p style={{fontSize:"13.4px"}}>유미와 대화하고 친밀도를 올려보세요!</p>
-                    <LinearProgressWithLabel text={youmeInfo.familiarity+' / '+(familiarityLevel==1?5:(familiarityLevel==2?15:"max"))} value={(familiarityLevel==1?youmeInfo.familiarity/5:(familiarityLevel==2?youmeInfo.familiarity/15:100))}/>
+                    <LinearProgressWithLabel text={(familiarityLevel==1?youmeInfo.familiarity:(familiarityLevel==2?youmeInfo.familiarity-5:youmeInfo.familiarity-20))+' / '+(familiarityLevel==1?5:(familiarityLevel==2?15:"max"))} value={(100*(familiarityLevel==1?youmeInfo.familiarity/5:(familiarityLevel==2?(youmeInfo.familiarity-5)/15:100)))}/>
                   </Grid>
                 </Grid>
               </Card>

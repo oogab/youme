@@ -2,9 +2,9 @@ const express = require('express')
 const request = require('request')
 
 const router = express.Router()
-
+const { writeHistory } = require('./middlewares')
 // 뉴스 검색
-router.post('/news', async (req, res, next) => {
+router.post('/news',writeHistory, async (req, res, next) => {
   const search_thing = req.body.query
   const api_url = 'https://openapi.naver.com/v1/search/news.json?query=' + encodeURI(search_thing) + '&display=5&sort=sim'
   const options = {
@@ -29,7 +29,7 @@ router.post('/news', async (req, res, next) => {
 })
 
 // 사전 검색
-router.post('/encyc', async (req, res, next) => {
+router.post('/encyc',writeHistory, async (req, res, next) => {
   const search_thing = req.body.query
   const api_url = 'https://openapi.naver.com/v1/search/encyc.json?query=' + encodeURI(search_thing) + '&display=1'
   const options = {

@@ -3,12 +3,12 @@ const moment = require('moment')
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const { Schedule, User } = require('../models')
-const { isLoggedIn } = require('./middlewares')
+const { isLoggedIn, writeHistory } = require('./middlewares')
 
 const router = express.Router()
 
 // 전체 일정 목록 가져오기
-router.post('/', async (req, res, next) => { // GET /routine
+router.post('/',writeHistory, async (req, res, next) => { // GET /routine
   try {
     const schedule = await Schedule.findAll({
       where: { UserId: req.body.userId },
