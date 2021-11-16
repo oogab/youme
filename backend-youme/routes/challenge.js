@@ -99,6 +99,7 @@ router.post('/image', upload.single('image'), async (req, res, next) => {
 })
 
 router.post('/certify', async (req, res, next) => {
+  
   const d = new Date()
   const td = new Date(d)
   const yesterday = td.setDate(d.getDate() - 1)
@@ -107,7 +108,7 @@ router.post('/certify', async (req, res, next) => {
     const challengeParticipation = await ChallengeParticipation.findOne({
       where: { ChallengeId: req.body.challengeId, UserId: req.body.userId }
     })
-    // console.log(challengeParticipation.id)
+    console.log(challengeParticipation.id)
     const exDailyCertifyChallenge = await DailyCertifyChallenge.findOne({
       where: {
         ChallengeParticipationId: challengeParticipation.id,
