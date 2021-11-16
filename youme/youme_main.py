@@ -14,6 +14,7 @@ import weather
 import mySchedule
 import search 
 import expression
+from getCurrentTime import currentTime
 
 # pyqt5
 from PyQt5 import QtCore
@@ -354,7 +355,6 @@ class MainWindow(QWidget):
 
     def initMainWindow(self):
         self.timer.start()
-        # login()
         
         # 0 : Loading
         # 1 : Normal
@@ -374,6 +374,9 @@ class MainWindow(QWidget):
         # 15: Pig
         # 16: Angry1
         # 17: Angry2
+        # 18: Weaken
+        # 19: Die
+        # 20: Lazy
         self.expressionList = [
             expression.drawLoadingExpression,
             expression.drawNormalExpression,
@@ -393,6 +396,9 @@ class MainWindow(QWidget):
             expression.drawPigExpression,
             expression.drawAngry1Expression,
             expression.drawAngry2Expression,
+            expression.drawWeakenExpression,
+            expression.drawDieExpression,
+            expression.drawLazyExpression,
         ]
 
         expression_index = 0
@@ -443,6 +449,7 @@ def login():
             else:
                 print('입력한 정보가 올바르지 않습니다!')
 
+currentTime()
 
 if __name__ == "__main__":
     # QApplication : 프로그램을 실행시켜주는 클래스

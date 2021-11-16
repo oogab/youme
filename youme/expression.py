@@ -170,6 +170,30 @@ def drawAngry2Expression(paint):
     paint.drawLine(500, 130, 450, 180)
     paint.drawArc(270, 250, 260, 200, 0 * 16, 180 * 16)
 
+def drawWeakenExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawEllipse(250, 100, 80, 120)
+    paint.drawLine(500, 100, 450, 150)
+    paint.drawLine(450, 150, 500, 200)
+    paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
+    paint.drawArc(400, 310, 100, 100, 180 * 16, 225 * 16)
+
+def drawDieExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawLine(300, 100, 350, 200)
+    paint.drawLine(350, 100, 300, 200)
+    paint.drawLine(500, 100, 450, 200)
+    paint.drawLine(450, 100, 500, 200)
+    paint.drawArc(320, 230, 160, 160, 0 * 16, 360 * 16)
+
+def drawLazyExpression(paint):
+    paint.setBrush(QColor(Qt.white))
+    paint.setPen(QPen(Qt.white, 5))
+    paint.drawLine(270, 150, 350, 150)
+    paint.drawLine(450, 150, 530, 150)
+    paint.drawArc(300, 200, 200, 160, 180 * 16, 180 * 16)
 
 if __name__=="__main__":
     pass
