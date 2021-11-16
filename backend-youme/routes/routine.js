@@ -29,13 +29,24 @@ router.post('/', async (req, res, next) => {
 router.post('/today', writeHistory, async (req, res, next) => {
   const userId = req.body.userId
 
+  const d = new Date()
+  const td = new Date(d)
+
+  const yesterday = td.setDate(d.getDate() - 1)
+  const today = td.setDate(d.getDate() + 1)
+
+  let day = d.getDay()-1
+  if (day === -1) {
+    day = 6
+  }
+
+
   try {
     const routines = await Routine.findAll({
       where: { UserId: userId },
       include: [{
-        model: RoutineActiveDay
-      }, {
-        model: DailyAchieveRoutine
+        model: RoutineActiveDay,
+        where: { day_of_week: day }
       }, {
         model: RoutinizedHabit,
         include: [{
@@ -46,6 +57,7 @@ router.post('/today', writeHistory, async (req, res, next) => {
     if (!routines) {
       return res.status(400).json({ message: '루틴이 없습니다! '})
     }
+    console.log(routines)
     res.status(200).json(routines)
   } catch (error) {
     console.log(error)
