@@ -8,7 +8,7 @@ import {Stop, Policy, Explore, FitnessCenter, LocalCafe, KingBed, CropPortrait, 
 import { OPEN_CONFIRM_MODAL } from '../../reducers/modal';
 import { useHistory } from 'react-router';
 import { socketUrl } from '../../config/config';
-const socket = socketIOClient('http://112.169.87.3:8005/a203a')
+const socket = socketIOClient(socketUrl+'/a203a')
 
 function LinearProgressWithLabel(props) {
   return (
