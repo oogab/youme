@@ -224,13 +224,14 @@ def listen_print_loop(responses):
             elif re.search(r'\b(불([가-힣]| )*켜([가-힣]| )*)\b', transcript, re.I):
                 light_mode = 0 # turn on
                 tts('응답 알겠습니다.', 0)
-                sio.emit('goSomwhere', { 'id': 'a203a', 'data': 0 }, namespace='/a203a')
-                ser.write(b'2')
+                sio.emit('goSomewhere', { 'id': 'a203a', 'data': 0 }, namespace='/a203a')
+                # ser.write(b'2')
 
             elif re.search(r'\b(불([가-힣]| )*꺼([가-힣]| )*)\b', transcript, re.I):
                 light_mode = 1 # 
                 tts('응답 알겠습니다.', 0)
-                ser.write(b'3')
+                sio.emit('goSomewhere', { 'id': 'a203a', 'data': 0}, namespace='/a203a')
+                # ser.write(b'3')
 
             elif re.search(r'\b(커피 내려 줘)\b', transcript, re.I):
                 tts('응답 알겠습니다.', 0)
@@ -288,9 +289,11 @@ def stt():
 def connect():
     print('connected!')
 
+"""
 @sio.on('sendNowMode', namespace='/a203a')
 def sendNowMode(data):
     print(data)
+"""
 
 @sio.on('moveResult', namespace='/a203a')
 def moveResult(data):
@@ -316,7 +319,7 @@ def moveResult(data):
     elif data['destination'] == 3 and data['status'] == 'success':
         tts('응답 부르셨나요?', 0)
 
-    else data['destination'] == 4 and data['status'] == 'success':
+    elif data['destination'] == 4 and data['status'] == 'success':
         tts('응답 오늘 하루도 수고하셨습니다.', 0)
 
 # talking mode config
@@ -449,7 +452,7 @@ class MainWindow(QWidget):
 
         expression_index = 0
         self.mainLayout = QVBoxLayout()
-        self.mainLayout.addWidget(alarmButton)
+        # self.mainLayout.addWidget(alarmButton)
         self.setLayout(self.mainLayout)
         self.show()
 
