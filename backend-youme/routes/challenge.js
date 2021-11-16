@@ -51,9 +51,18 @@ router.post('/', async (req, res, next) => {
 router.post('/today', async (req, res, next) => {
   const userId = req.body.userId
 
+  const d = new Date()
+  const td = new Date(d)
+  const yesterday = td.setDate(d.getDate() - 1)
+
   try {
     const challenges = await Challenge.findAll({
-      where: { UserId: userId },
+      where: {
+        UserId: userId,
+        end_date: {
+          [Op.gte]: yesterday
+        }
+      },
       include: [{
         model: ChallengeCertificationDay
       }, {
@@ -90,13 +99,22 @@ router.post('/image', upload.single('image'), async (req, res, next) => {
 })
 
 router.post('/certify', async (req, res, next) => {
+  const d = new Date()
+  const td = new Date(d)
+  const yesterday = td.setDate(d.getDate() - 1)
+
   try {
     const challengeParticipation = await ChallengeParticipation.findOne({
       where: { ChallengeId: req.body.challengeId, UserId: req.body.userId }
     })
     // console.log(challengeParticipation.id)
     const exDailyCertifyChallenge = await DailyCertifyChallenge.findOne({
-      where: { ChallengeParticipationId: challengeParticipation.id, certification_datetime: req.body.certification_datetime }
+      where: {
+        ChallengeParticipationId: challengeParticipation.id,
+        certification_datetime: {
+          [Op.gte]: yesterday
+        } 
+      }
     })
 
     if (exDailyCertifyChallenge) {

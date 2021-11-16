@@ -2,7 +2,7 @@ const express = require('express')
 
 const dialogflow = require('dialogflow')
 const dotenv = require('dotenv');
-const { DailyAchieveRoutine, Routine, RoutineActiveDay } = require('../models');
+const { DailyAchieveRoutine, Routine, RoutineActiveDay, Challenge, ChallengeCertificationDay, ChallengeParticipation, DailyCertifyChallenge } = require('../models');
 const { Op } = require('sequelize')
 
 dotenv.config()
@@ -21,7 +21,7 @@ router.post('/textQuery', async (req, res) => {
   const userId = req.body.userId
 
   message = req.body.message.trim()
-  if (message.search(/심심/) >= 0) {
+  if (message.search(/심심|뭐|할 거/) >= 0) {
     const d = new Date()
     const td = new Date(d)
 
@@ -43,32 +43,61 @@ router.post('/textQuery', async (req, res) => {
       raw: true,
       nest: true
     })
-    const routineId = routine.map(r => r.id)
-    console.log(routineId.length)
-    // if (!routine) {
+    if (routine) {
+      const routineId = routine.map(r => r.id)
+      const checkRoutineComplete = await DailyAchieveRoutine.findAll({
+        where: {
+          RoutineId: routineId,
+          achieve_datetime: {
+            [Op.between] : [yesterday, today]
+          }
+        },
+        raw: true
+      })
+      if (checkRoutineComplete.length !== routineId.length) {
+        return res.send('응답 아직 못 끝낸 루틴이 있습니다! 루틴을 먼저 마무리하세요!')
+      }
+    }
 
-    // }
-    
-    
-    // let tomorrow = td.setDate(td.getDate()+1)
-    // tomorrow.setHours(0,0,0,0)
-
-    console.log(yesterday, today)
-
-    const checkRoutineComplete = await DailyAchieveRoutine.findAll({
+    const challenge = await Challenge.findAll({
       where: {
-        RoutineId: routineId,
-        achieve_datetime: {
-          [Op.between] : [yesterday, today]
+        UserId: userId,
+        end_date: {
+          [Op.gte]: yesterday
         }
       },
-      raw: true
+      include: [{
+        model: ChallengeCertificationDay,
+        where: {
+          active_day_of_week: day,
+          certification_available: true
+        }
+      },{
+        model: ChallengeParticipation,
+        attributes: ['id']
+      }],
+      attributes: ['id'],
+      raw: true,
+      nest: true
     })
-    if (checkRoutineComplete.length !== routineId.length) {
-      return res.send('응답 아직 못 끝낸 루틴이 있습니다! 루틴을 먼저 마무리하세요!')
+    console.log(challenge)
+    if (challenge) {
+      const challengePId = challenge.map(c => c.ChallengeParticipations.id)
+      const checkChallengeComplete = await DailyCertifyChallenge.findAll({
+        where: {
+          ChallengeParticipationId: challengePId,
+          certification_datetime: {
+            [Op.between] : [yesterday, today]
+          }
+        },
+        raw: true
+      })
+      if (checkChallengeComplete.length !== challengePId.length) {
+        return res.send('응답 아직 못 끝낸 챌린지가 있습니다! 챌린지를 먼저 마무리하세요!')
+      }
+      // console.log(checkChallengeComplete)
     }
   }
-  console.log(message.search(/심심/))
 
   const request = {
     session: sessionPath,
