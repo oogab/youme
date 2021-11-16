@@ -56,6 +56,9 @@ url = 'http://112.169.87.3:8005'
 stop_stream = False
 
 ser = serial.Serial("/dev/ttyACM0", 9600)
+alarm_mode = False
+release_alarm = False
+light_mode = 0
 
 class MicrophoneStream(object):
     def __init__(self, rate, chunk):
@@ -127,6 +130,7 @@ class MicrophoneStream(object):
 def listen_print_loop(responses):
     global mic
     global user_id
+    global light_mode
     num_chars_printed = 0
     call_youme = False
     pygame.mixer.init()
@@ -160,6 +164,7 @@ def listen_print_loop(responses):
 
             if re.search(r'\b(유미야)\b', transcript, re.I):
                 call_youme = True
+                releaseAlarm()
                 global expression_index
                 expression_index = 2
                 pygame.mixer.music.load("./replyMP3/youme_wake.mp3")
@@ -197,7 +202,7 @@ def listen_print_loop(responses):
 
             elif re.search(r'\b(소켓)\b', transcript, re.I):
                 global sio
-                sio.emit('message', '소켓 메세지 입니다.', namespace='/'+str(user_id))
+                sio.emit('message', '소켓 메세지 입니다.', namespace='/a203a')
                 tts('응답 알겠습니다.', 0)
 
             elif re.search(r'\b(고마워)\b', transcript, re.I):
@@ -217,12 +222,19 @@ def listen_print_loop(responses):
                     mic.resume()
 
             elif re.search(r'\b(불([가-힣]| )*켜([가-힣]| )*)\b', transcript, re.I):
+                light_mode = 0 # turn on
                 tts('응답 알겠습니다.', 0)
+                sio.emit('goSomwhere', { 'id': 'a203a', 'data': 0 }, namespace='/a203a')
                 ser.write(b'2')
 
             elif re.search(r'\b(불([가-힣]| )*꺼([가-힣]| )*)\b', transcript, re.I):
+                light_mode = 1 # 
                 tts('응답 알겠습니다.', 0)
                 ser.write(b'3')
+
+            elif re.search(r'\b(커피 내려 줘)\b', transcript, re.I):
+                tts('응답 알겠습니다.', 0)
+                sio.emit('goSomewhere', { 'id': 'a203a', 'data': 1 }, namespace='/a203a')
 
             else:
                 headers = {
@@ -272,9 +284,40 @@ def stt():
         responses = client.streaming_recognize(streaming_config, requests)
         listen_print_loop(responses)
 
-@sio.on('connect', namespace='/'+str(user_id))
+@sio.on('connect', namespace='/a203a')
 def connect():
     print('connected!')
+
+@sio.on('sendNowMode', namespace='/a203a')
+def sendNowMode(data):
+    print(data)
+
+@sio.on('moveResult', namespace='/a203a')
+def moveResult(data):
+    # print(data)
+    global light_mode
+
+    if data['destination'] == 0 and data['status'] == 'success':
+        if light_mode == 0: 
+            ser.write(b'2')
+            tts('응답 불을 켰습니다.', 0)
+        else:
+            ser.write(b'3')
+            tts('응답 불을 껐습니다.', 0)
+        
+
+    elif data['destination'] == 1 and data['status'] == 'success':
+        ser.write(b'1')
+        tts('응답 커피 내릴게요!', 0)
+
+    elif data['destination'] == 2 and data['status'] == 'success':
+        tts('응답 미러에 도착했어요!', 0)
+
+    elif data['destination'] == 3 and data['status'] == 'success':
+        tts('응답 부르셨나요?', 0)
+
+    else data['destination'] == 4 and data['status'] == 'success':
+        tts('응답 오늘 하루도 수고하셨습니다.', 0)
 
 # talking mode config
 #
@@ -355,6 +398,9 @@ class MainWindow(QWidget):
 
     def initMainWindow(self):
         self.timer.start()
+        alarmButton = QPushButton(self)
+        alarmButton.setText('Check')
+        alarmButton.clicked.connect(setReleaseAlarm) 
         
         # 0 : Loading
         # 1 : Normal
@@ -403,7 +449,7 @@ class MainWindow(QWidget):
 
         expression_index = 0
         self.mainLayout = QVBoxLayout()
-
+        self.mainLayout.addWidget(alarmButton)
         self.setLayout(self.mainLayout)
         self.show()
 
@@ -444,12 +490,41 @@ def login():
             if response.status_code == 200:
                 global sio
                 print('로그인 성공!')
-                sio.connect(url, namespaces=['/'+str(user_id)]) 
+                sio.connect(url, namespaces=['/a203a'])
+                sio.emit('roomjoin', 'a203a', namespace='/a203a')
                 expression_index = 1
             else:
                 print('입력한 정보가 올바르지 않습니다!')
 
-currentTime()
+
+# 여기 너무 복잡한데ㅠ 최적화 필요하다.
+def setReleaseAlarm():
+    global release_alarm
+    release_alarm = True
+    time.sleep(60000)
+    release_alarm = False
+
+def releaseAlarm():
+    global release_alarm
+    print(release_alarm)
+    if release_alarm == True:
+        return False
+
+    return True
+
+def checkCurrentTime():
+    global alarm_mode
+    while True:
+        now_time = currentTime()
+        print(now_time)
+        print(routine.todayRoutinesStartTime)
+        
+        if now_time in routine.todayRoutinesStartTime and releaseAlarm():
+            alarm_mode = True
+            pygame.mixer.music.load("./replyMP3/beep.mp3")
+            pygame.mixer.music.play()
+
+        time.sleep(1)
 
 if __name__ == "__main__":
     # QApplication : 프로그램을 실행시켜주는 클래스
@@ -482,6 +557,8 @@ if __name__ == "__main__":
 
     # 처음은 강제로 실행시켜줘야 한다.
     start_stt_t()
+    check_time = threading.Timer(1, checkCurrentTime)
+    check_time.start()
     login()
 
     # 프로그램을 이벤트 루프로 진입시키는(프로그램을 작동시키는) 코드

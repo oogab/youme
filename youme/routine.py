@@ -15,6 +15,7 @@ url = 'http://112.169.87.3:8005'
 
 allRoutines = []
 todayRoutines = []
+todayRoutinesStartTime = []
 tomorrowRoutines = []
 
 # 루틴 관련 쿼리 처리 허브
@@ -76,9 +77,11 @@ def today_routine(transcript, data):
             return '응답 오늘 진행할 루틴이 없습니다!'
 
         routines = res.json()
+        print(routines)
         for routine in routines:
-            if routine['RoutineActiveDays'][datetime.datetime.today().weekday()]['active'] == True:
+            if routine['RoutineActiveDays'][0]['active'] == True:
                 todayRoutines.append(routine)
+                todayRoutinesStartTime.append(routine['RoutineActiveDays'][0]['start_time'])
     
     todayRoutineNames = [todayRoutine['name'] for todayRoutine in todayRoutines]
     tmp_routines = '' 
