@@ -105,13 +105,14 @@ def certify_challenge(challenge_num, data):
 
     photo = take_photo.take_photo()
     s3_address = upload.upload_photo(photo)
+    print(s3_address)
     
     challenge_id = todayChallenges[challenge_num]['id']
     certify_date = str(datetime.date.today())
     # print(certify_date)
 
     certify_data = {
-        'userId' : user_id,
+        'userId' : data['userId'],
         'challengeId' : challenge_id,
         'img_addr' : s3_address,
         'content' : '인증합니다.',
