@@ -6,7 +6,7 @@ import time
 import random
 import pygame
 import serial
-
+import ast
 # module
 import routine
 import challenge
@@ -43,13 +43,17 @@ sio = socketio.Client()
 
 RATE = 8000
 CHUNK = int(RATE / 10)
+FRAME = []
+ENDPOINT = "https://mymespeakers.cognitiveservices.azure.com"
+KEY = "1df5d6a47a8e4ccfacf5003d460f9fa7"
 
 email = 'oogab@naver.com'
 password = 'test123!'
 
 cookies = ''
 user_id = ''
-
+connectedSpeaker = False
+speakerId = ''
 # url = 'http://k5a203.p.ssafy.io:8005'
 url = 'http://112.169.87.3:8005'
 
@@ -101,9 +105,11 @@ class MicrophoneStream(object):
         return self.isPause
 
     def _fill_buffer(self, in_data, frame_count, time_info, status_flags):
+        global FRAME
         # Continuously collect data from the audio stream, into the buffer.
         if self.isPause == False:
             self._buff.put(in_data)
+            FRAME.append(in_data)
         # else
         # self._buff.put(in_data)
         return None, pyaudio.paContinue
@@ -131,6 +137,9 @@ def listen_print_loop(responses):
     global mic
     global user_id
     global light_mode
+    global FRAME
+    global speakerId
+    global connectedSpeaker
     num_chars_printed = 0
     call_youme = False
     pygame.mixer.init()
@@ -156,7 +165,11 @@ def listen_print_loop(responses):
 
             num_chars_printed = len(transcript)
         elif call_youme == False:
+
+
             print(transcript + overwrite_chars)
+            
+            
 
             if re.search(r'\b(명령 끝)\b', transcript, re.I):
                 print('Exiting..')
@@ -176,21 +189,68 @@ def listen_print_loop(responses):
         else:
             print(transcript + overwrite_chars)
             
+            found = True
+            if connectedSpeaker and speakerId :
+                data = b''.join(FRAME)
+                headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
+                rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
+                mydata = rs.content.decode('utf-8')
+                mydata = ast.literal_eval(mydata)
+                if mydata['identifiedProfile']['profileId'] != speakerId:
+                    found = False
+
             if re.search(r'\b(명령 끝)\b', transcript, re.I):
                 print('Exiting..')
                 break
 
             if re.search(r'\b(루틴)\b', transcript, re.I):
-                script = routine.routine_query(transcript, user_id)
-                tts(script, 0)
+                found = True
+                if connectedSpeaker and speakerId :
+                    data = b''.join(FRAME)
+                    headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
+                    rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
+                    mydata = rs.content.decode('utf-8')
+                    mydata = ast.literal_eval(mydata)
+                    if mydata['identifiedProfile']['profileId'] != speakerId:
+                        found = False
+                if found : 
+                    script = routine.routine_query(transcript, user_id)
+                    tts(script, 0)
+                else :
+                    tts("응답 알려줄 수 없어요!", 0)
 
             elif re.search(r'\b((챌|첼)린지)\b', transcript, re.I):
-                script = challenge.challenge_query(transcript, user_id)
-                tts(script, 0)
+                found = True
+                if connectedSpeaker and speakerId :
+                    data = b''.join(FRAME)
+                    headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
+                    rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
+                    mydata = rs.content.decode('utf-8')
+                    mydata = ast.literal_eval(mydata)
+                    if mydata['identifiedProfile']['profileId'] != speakerId:
+                        found = False
+                
+                if found : 
+                    script = challenge.challenge_query(transcript, user_id)
+                    tts(script, 0)
+                else :
+                    tts("응답 알려줄 수 없어요!", 0)
             
             elif re.search(r'\b(일정)\b', transcript, re.I):
-                script = mySchedule.schedule_query(transcript, user_id)
-                tts(script, 0)
+                found = True
+                if connectedSpeaker and speakerId :
+                    data = b''.join(FRAME)
+                    headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
+                    rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
+                    mydata = rs.content.decode('utf-8')
+                    mydata = ast.literal_eval(mydata)
+                    if mydata['identifiedProfile']['profileId'] != speakerId:
+                        found = False
+                if found : 
+                    script = mySchedule.schedule_query(transcript, user_id)
+                    tts(script, 0)
+                else :
+                    tts("응답 알려줄 수 없어요!", 0)
             
             elif re.search(r'\b(날씨|미세 먼지|미세먼지)\b', transcript, re.I):
                 script = weather.weather_query(transcript)
@@ -489,7 +549,8 @@ def login():
             cookies = response.cookies
             headers = session.headers
             user_id = response.json()["id"]
-
+            connectedSpeaker = response.json()["connectedSpeaker"]
+            speakerId = response.json()["speakerId"]
             if response.status_code == 200:
                 global sio
                 print('로그인 성공!')
