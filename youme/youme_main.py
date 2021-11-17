@@ -32,7 +32,6 @@ import pyaudio
 import queue
 import asyncio
 import socketio
-# from socketIO_client import SocketIO, BaseNamespace
 import requests
 import json
 
@@ -188,7 +187,7 @@ def listen_print_loop(responses):
                 script = challenge.challenge_query(transcript, user_id)
                 tts(script, 0)
             
-            elif re.search(r'\b(일정)\b', transcript, re.I):
+            elif re.search(r'\b(일정|스케줄)\b', transcript, re.I):
                 script = mySchedule.schedule_query(transcript, user_id)
                 tts(script, 0)
             
@@ -199,12 +198,7 @@ def listen_print_loop(responses):
             elif re.search(r'\b(검색)\b', transcript, re.I):
                 script = search.search_query(transcript)
                 tts(script, 2)
-
-            elif re.search(r'\b(소켓)\b', transcript, re.I):
-                global sio
-                sio.emit('message', '소켓 메세지 입니다.', namespace='/a203a')
-                tts('응답 알겠습니다.', 0)
-
+           
             elif re.search(r'\b(고마워)\b', transcript, re.I):
                 rint = random.randrange(0, 2)
                 expression_index = 3
