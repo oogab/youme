@@ -8,6 +8,7 @@ import pygame
 import serial
 
 # module
+from connection import url
 import routine
 import challenge
 import weather
@@ -49,8 +50,8 @@ password = 'test123!'
 cookies = ''
 user_id = ''
 
-# url = 'http://k5a203.p.ssafy.io:8005'
-url = 'http://112.169.87.3:8005'
+# url = 'https://k5a203.p.ssafy.io'
+# url = 'http://112.169.87.3:8005'
 
 stop_stream = False
 
@@ -199,22 +200,6 @@ def listen_print_loop(responses):
                 script = search.search_query(transcript)
                 tts(script, 2)
            
-            elif re.search(r'\b(고마워)\b', transcript, re.I):
-                rint = random.randrange(0, 2)
-                expression_index = 3
-                if rint == 0:
-                    pygame.mixer.music.load("./replyMP3/gwaenchan.mp3")
-                    pygame.mixer.music.play()
-                    while pygame.mixer.music.get_busy() == True:
-                        mic.pause()
-                    mic.resume()
-                else:
-                    pygame.mixer.music.load("./replyMP3/jaeil.mp3")
-                    pygame.mixer.music.play()
-                    while pygame.mixer.music.get_busy() == True:
-                        mic.pause()
-                    mic.resume()
-
             elif re.search(r'\b(불([가-힣]| )*켜([가-힣]| )*)\b', transcript, re.I):
                 light_mode = 0 # turn on
                 tts('응답 알겠습니다.', 0)
@@ -237,7 +222,8 @@ def listen_print_loop(responses):
                 }
                 data = {'message': transcript, 'userId': user_id}
                 res = requests.post(url+'/youme/textQuery', headers=headers, data=json.dumps(data))
-                tts(res.text, 0)
+                result =  res.json()
+                tts(result['message'], result['type'])
             call_youme = False
             expression_index = 1
 
@@ -283,12 +269,6 @@ def stt():
 def connect():
     print('connected!')
 
-"""
-@sio.on('sendNowMode', namespace='/a203a')
-def sendNowMode(data):
-    print(data)
-"""
-
 @sio.on('moveResult', namespace='/a203a')
 def moveResult(data):
     # print(data)
@@ -302,7 +282,6 @@ def moveResult(data):
             ser.write(b'3')
             tts('응답 불을 껐습니다.', 0)
         
-
     elif data['destination'] == 1 and data['status'] == 'success':
         ser.write(b'1')
         tts('응답 커피 내릴게요!', 0)
@@ -320,7 +299,9 @@ def moveResult(data):
 #
 # 0 : normalTalking
 # 1 : heartTalking
-#
+# 2 : normalTalking mic live
+# 3 : thanksTalking
+# 7 : dissapointTalking
 #
 def tts(talk, mode):
     global mic
@@ -353,6 +334,15 @@ def tts(talk, mode):
         out.write(response.audio_content)
         print('Audio content written to file "output.mp3"')
 
+    if mode == 'Listen':
+        mode = 7
+    elif mode == 'GotoOutside':
+        mode = 4
+    elif mode == 'Thanks':
+        mode = 3
+    elif mode == 'ComeHome':
+        mode = 5
+
     # 생성된 output.mp3 파일 실행
     pygame.mixer.music.load("output.mp3")
     pygame.mixer.music.play()
@@ -364,7 +354,32 @@ def tts(talk, mode):
             heartTalking()
         elif mode == 2:
             normalTalking()
+        elif mode == 3:
+            mic.pause()
+            thanksTalking()
+        elif mode == 4 or mode ==  5:
+            mic.pause()
+            smileTalking()
+        elif mode == 7:
+            mic.pause()
+            dissapointTalking()
+
     mic.resume()
+
+def smileTalking():
+    global expression_index
+    expression_index = 3
+
+def thanksTalking():
+    global expression_index
+    expression_index = 6
+    time.sleep(0.3)
+    expression_index = 1
+    time.sleep(0.3)
+
+def dissapointTalking():
+    global expression_index
+    expression_index = 7
 
 def normalTalking():
     global mic
