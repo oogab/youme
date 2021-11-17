@@ -199,6 +199,7 @@ def listen_print_loop(responses):
                     data = b''.join(FRAME)
                     headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
                     rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
+                    FRAME=[]
                     mydata = rs.content.decode('utf-8')
                     mydata = ast.literal_eval(mydata)
                     if mydata['identifiedProfile']['profileId'] != speakerId:
@@ -215,6 +216,7 @@ def listen_print_loop(responses):
                     data = b''.join(FRAME)
                     headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
                     rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
+                    FRAME=[]
                     mydata = rs.content.decode('utf-8')
                     mydata = ast.literal_eval(mydata)
                     if mydata['identifiedProfile']['profileId'] != speakerId:
@@ -232,6 +234,7 @@ def listen_print_loop(responses):
                     data = b''.join(FRAME)
                     headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
                     rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
+                    FRAME=[]
                     mydata = rs.content.decode('utf-8')
                     mydata = ast.literal_eval(mydata)
                     if mydata['identifiedProfile']['profileId'] != speakerId:
