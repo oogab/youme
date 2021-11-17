@@ -188,16 +188,6 @@ def listen_print_loop(responses):
             num_chars_printed = 0
         else:
             print(transcript + overwrite_chars)
-            
-            found = True
-            if connectedSpeaker and speakerId :
-                data = b''.join(FRAME)
-                headers={'Content-Type':'audio/wav; codecs=audio/pcm; samplerate=16000','Ocp-Apim-Subscription-Key':KEY}
-                rs = requests.post(ENDPOINT+'/speaker/identification/v2.0/text-independent/profiles/identifySingleSpeaker?profileIds='+speakerId,data=data,headers=headers)
-                mydata = rs.content.decode('utf-8')
-                mydata = ast.literal_eval(mydata)
-                if mydata['identifiedProfile']['profileId'] != speakerId:
-                    found = False
 
             if re.search(r'\b(명령 끝)\b', transcript, re.I):
                 print('Exiting..')
