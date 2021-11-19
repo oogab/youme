@@ -12,6 +12,77 @@
 </table>
 <br/>
 
+## **🔎YOUME란?**
+
+**당신의 건강한 일상을 돕는 반려로봇**
+
+1. 다양한 음성 명령
+   - 루틴/챌린지/일정 알려줘
+   - 오늘/내일/주말 날씨 어때?
+   - 오늘 미세먼지 알려줘
+   - 지금 몇 시야?
+   - ooo위키 검색해줘
+   - ooo뉴스 검색해줘
+
+<br/>
+
+2. 실시간 일상 대화
+   - 오늘 하루 어때
+   - 너무 심심해
+   - 고마워
+   - 오늘 너무 피곤한걸
+
+<br/>
+
+3. 자율 주행
+4. IoT기기 제어
+5. WEB제어 및 상태 관리
+
+의 기능이 가능합니다.
+
+<br/>
+<br/>
+
+- ### YOUME
+  ![YOUME1](https://user-images.githubusercontent.com/48434764/142556988-820d3be9-6707-4303-85e4-c0339ccebf6f.PNG)
+  ![YOUME2](https://user-images.githubusercontent.com/48434764/142557021-0c9e2535-0a85-4f93-9d98-0f9ab2308530.PNG)
+  <BR/>
+- ### 프로젝트 기술 구상도
+
+  ![구상도](https://user-images.githubusercontent.com/48434764/142556467-837e1e68-d58c-4c75-bd00-c4d07365d048.PNG)
+  <br/>
+
+- ### 웹 서비스 화면
+  ![web](https://user-images.githubusercontent.com/48434764/142556699-7e35300b-f197-4f9c-9b74-c3795df12a1e.PNG)
+  <br/>
+
+<br/>
+<br/>
+
+## **🧩Tech Stack**
+
+Robot:
+![ROS](https://img.shields.io/badge/ROS-22314E?style=flat-square&logo=ROS&logoColor=black)
+
+Embedded:
+![raspberryPi](https://img.shields.io/badge/RaspberryPi-A22846?style=flat-square&logo=RaspberryPi&logoColor=black)
+![arduino](https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=Arduino&logoColor=black)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=black)
+
+Frontend:
+![react](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=black)
+![redux](https://img.shields.io/badge/Redux-764ABC?style=flat-square&logo=Redux&logoColor=black)
+![redux-saga](https://img.shields.io/badge/ReduxSaga-999999?style=flat-square&logo=Redux-Saga&logoColor=black)
+
+Backend:
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=AWS&logoColor=black)
+![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=Jenkins&logoColor=black)
+![node](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=black)
+![express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=Express&logoColor=white)
+![mysql](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=black)
+
+<br/>
+
 ## **🎞History**
 
 - **10-12 ~ 10-15** : 주제 기획, 교보재 신청, 개별 학습 진행
@@ -23,21 +94,6 @@
 - **11-15 ~ 11-19** : 기능 최종 통합 및 테스트, HW보완 및 완성, UCC제작, 최종 발표
 
   <br/>
-
-## **📝Today's Meeting**
-
-### 11월 18일
-
-- Daily Scrum
-
-  | member | content                                                                          |
-  | ------ | -------------------------------------------------------------------------------- |
-  | 김민주 | UCC 촬영 했고 편집 진행중입니다.                                                 |
-  | 김민지 | UCC 촬영 했고 필요한 부분 촬영 더 진행하겠다.                                    |
-  | 백상욱 | UCC 배우 했고 소스 진짜 쪼금만 더 손보고 발표 자료 준비 및 시연 연습 하겠습니다. |
-  | 백유리 | UCC 촬영 했고 남은 일들 돕겠다.                                                  |
-
-<br/>
 
 ## **🌝개발 업무 분담**
 
