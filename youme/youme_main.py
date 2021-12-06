@@ -45,7 +45,6 @@ RATE = 8000
 CHUNK = int(RATE / 10)
 FRAME = []
 ENDPOINT = "https://mymespeakers.cognitiveservices.azure.com"
-KEY = "1df5d6a47a8e4ccfacf5003d460f9fa7"
 
 email = 'oogab@naver.com'
 password = 'test123!'
